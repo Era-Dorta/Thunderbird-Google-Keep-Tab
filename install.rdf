@@ -4,12 +4,12 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
-    <em:id>thunderkeep@jensheuschkel.de</em:id>
+    <em:id>thunderkeepplusplus@gmail.com</em:id>
 	<em:type>2</em:type>
-    <em:name>ThunderKeep</em:name>
+    <em:name>ThunderKeepPlus</em:name>
     <em:version>0.7</em:version>
-    <em:creator>Jens Heuschkel</em:creator>
-    <em:developer>Garoe Dorta</em:developer>
+    <em:creator>Garoe Dorta</em:creator>
+    <em:developer>Jens Heuschkel</em:developer>
     <em:description>Google Keep for Thunderbird</em:description>
    
     <em:targetApplication>
