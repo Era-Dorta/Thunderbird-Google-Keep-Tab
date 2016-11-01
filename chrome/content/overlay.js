@@ -15,15 +15,14 @@ onLoad: function() {
 	try{
 		thunderkeep.debug("start");
 		let installButton = true;
-		let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-		prefBranch.deleteBranch("extensions.thunderkeep@jensheuschkel.deinstallComplete");
+		let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 		
 		prefBranch = prefBranch.getBranch("extensions.thunderkeep@jensheuschkel.de.");
 		if (prefBranch && prefBranch.getPrefType("installComplete") == prefBranch.PREF_BOOL){
 			installButton = !prefBranch.getBoolPref("installComplete");
 		}
 		thunderkeep.debug("installComplete is " + !installButton);
-	
+		
 		if (installButton) {
 			thunderkeep.debug("installing button");
 			// Find the navigation bar and append the CloseAllTabs button
