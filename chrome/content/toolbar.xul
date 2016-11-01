@@ -2,7 +2,7 @@
 <!DOCTYPE thunderkeepplus SYSTEM "chrome://thunderkeepplus/locale/overlay.dtd">
 <?xml-stylesheet href="chrome://thunderkeepplus/skin/overlay.css" type="text/css"?>
 
-<overlay id="ThunderkeepOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay id="ThunderkeepplusOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
    <script type="application/x-javascript" src="chrome://thunderkeepplus/content/overlay.js"/>
    
    <toolbarpalette id="MailToolbarPalette">
