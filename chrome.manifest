@@ -1,0 +1,7 @@
+content   thunderkeep                 chrome/content/
+skin      thunderkeep   classic/1.0   chrome/skin/
+locale    thunderkeep   en-US         chrome/locale/en-US/
+locale	  thunderkeep   de	          chrome/locale/de/
+
+style chrome://global/content/customizeToolbar.xul chrome://thunderkeep/skin/overlay.css
+overlay chrome://messenger/content/messenger.xul chrome://thunderkeep/content/toolbar.xul
