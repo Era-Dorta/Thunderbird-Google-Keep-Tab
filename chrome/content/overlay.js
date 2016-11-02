@@ -63,7 +63,24 @@ onLoad: function() {
 onToolbarButtonCommand: function(e) {
 	// Open a new tab with Google Calendar
     let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
-    mailPane.document.getElementById("tabmail").openTab("contentTab", {contentPage: "http://keep.google.com", type: "googlekeep"});
+    let tabManager = mailPane.document.getElementById("tabmail");
+    //let allTabs = tabManager.getTabs("contentTab");
+    let allTabs = mailPane.document.getElementById("tabmail");
+    
+    //mailPane.document.getElementById("tabmail").openTab("contentTab", {contentPage: "http://keep.google.com", type: "googlekeep"});
+
+	let isTabOpen = false;
+    for (i = 0; i < allTabs.length; i++) { 
+    	if(tabManager.getTabTitle(allTabs[i])){
+    		isTabOpen =  true;
+    		break;
+    	}
+    }
+    
+    if(!isTabOpen){
+        let thunderkeepplustab = tabManager.openTab("contentTab", {contentPage: "http://keep.google.com", type: "googlekeep"});
+    	tabManager.setTabTitle(thunderkeepplustab, "Google Keep");
+    }
 }
 };
 
