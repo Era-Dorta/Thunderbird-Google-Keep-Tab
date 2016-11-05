@@ -4,7 +4,7 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
-    <em:id>thunderkeepplusplus@gmail.com</em:id>
+    <em:id>thunderkeepplus@gmail.com</em:id>
 	<em:type>2</em:type>
     <em:name>ThunderKeepPlus</em:name>
     <em:version>0.7</em:version>
