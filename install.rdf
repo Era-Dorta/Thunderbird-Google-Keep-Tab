@@ -9,7 +9,7 @@
     <em:name>ThunderKeepPlus</em:name>
     <em:version>0.7</em:version>
     <em:creator>Garoe Dorta</em:creator>
-    <em:developer>Jens Heuschkel</em:developer>
+    <em:contributor>Jens Heuschkel</em:contributor>
     <em:description>Google Keep for Thunderbird</em:description>
     <em:iconURL>chrome://thunderkeepplus/skin/google_keep_logo_large.png</em:iconURL>
     <em:homepageURL>https://github.com/Garoe/ThunderKeepPlus</em:homepageURL>
