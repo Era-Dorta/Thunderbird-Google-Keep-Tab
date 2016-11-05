@@ -21,6 +21,22 @@
         <em:maxVersion>45.*</em:maxVersion>
       </Description>
     </em:targetApplication>
+    
+    <em:localized>
+      <Description>
+        <em:locale>es-ES</em:locale>
+        <em:name>ThunderKeepPlus</em:name>
+        <em:description>Google Keep en Thunderbird</em:description>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>de</em:locale>
+        <em:name>ThunderKeepPlus</em:name>
+        <em:description>Google Keep für Thunderbird</em:description>
+      </Description>
+    </em:localized>
    
   </Description>      
 </RDF>
