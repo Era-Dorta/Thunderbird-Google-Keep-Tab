@@ -82,7 +82,7 @@ onToolbarButtonCommand: function(e) {
 
 	thunderkeepplus.debug("Tab no found, opening new one");
 	
-	tabManager.openTab("contentTab", {contentPage: "http://keep.google.com", type: "googlekeep"});
+	tabManager.openTab("contentTab", {contentPage: "http://keep.google.com"});
 }
 };
 
