@@ -4,7 +4,7 @@ enableDebug: false,
 debug: function (aMessage) {
 	if(thunderkeepplus.enableDebug) {
 		let consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
-		consoleService.logStringMessage("thunderkeepplus: " + aMessage);
+		consoleService.logStringMessage("ThunderKeepPlus: " + aMessage);
 	}
 },
 
@@ -57,7 +57,7 @@ onLoad: function() {
 				thunderkeepplus.debug("Button successfully installed");
 			} 
 		}
-	} catch(e) { alert("Error installing thunderkeepplus: " + e); }
+	} catch(e) { alert("Error ThunderKeepPlus onLoad: " + e); }
 },
 
 onToolbarButtonCommand: function(e) {
@@ -86,7 +86,7 @@ onToolbarButtonCommand: function(e) {
 		tabManager.openTab("contentTab", {contentPage: "http://keep.google.com"});
 	
 		thunderkeepplus.debug("Tab successfully created");
-	} catch(e) { alert("Error opening/swithing to Google Keep tab: " + e); }
+	} catch(e) { alert("Error ThunderKeepPlus onToolbarButtonCommand: " + e); }
 }
 };
 
