@@ -21,12 +21,12 @@ onLoad: function() {
 		if (prefBranch && prefBranch.getPrefType("installComplete") == prefBranch.PREF_BOOL){
 			installButton = !prefBranch.getBoolPref("installComplete");
 		}
-		thunderkeepplus.debug("installComplete is " + !installButton);
+		thunderkeepplus.debug("InstallComplete is " + !installButton);
 		
 		if (installButton) {
-			thunderkeepplus.debug("installing button");
+			thunderkeepplus.debug("Installing button");
 			// Find the navigation bar and append the CloseAllTabs button
-			prefBranch.setBoolPref("installComplete", true);
+			prefBranch.setBoolPref("InstallComplete", true);
 			let mainNavBar = document.getElementById("mail-bar3");
 			
 			if(!mainNavBar || !mainNavBar.currentSet) {
@@ -54,7 +54,7 @@ onLoad: function() {
 				try {
 					BrowserToolboxCustomizeDone(true);
 				} catch (e) { }
-				thunderkeepplus.debug("button successfully installed");
+				thunderkeepplus.debug("Button successfully installed");
 			} 
 		}
 	} catch(e) { alert("Error installing thunderkeepplus: " + e); }
@@ -63,28 +63,30 @@ onLoad: function() {
 onToolbarButtonCommand: function(e) {
 
 	// Open a new tab with Google Keep or focus on the already opened one
-	let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
-	let tabManager = mailPane.document.getElementById("tabmail");
-	let tabsArray = tabManager.tabInfo;
+	try{
+		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+		let tabManager = mailPane.document.getElementById("tabmail");
+		let tabsArray = tabManager.tabInfo;
 	
-	thunderkeepplus.debug("Found " + String(tabsArray.length) + " tabs");
+		thunderkeepplus.debug("Found " + String(tabsArray.length) + " tabs");
 	
-	for (i = 0; i < tabsArray.length; i++) {
-		thunderkeepplus.debug("Tab " + i + " is " + tabsArray[i].title);
+		for (i = 0; i < tabsArray.length; i++) {
+			thunderkeepplus.debug("Tab " + i + " is \"" + tabsArray[i].title + "\"");
 		
-		if(tabsArray[i].title === "Sign in - Google Accounts" || tabsArray[i].title === "Google Keep"){
-			thunderkeepplus.debug("Switch to tab " + tabsArray[i].title);
+			if(tabsArray[i].title === "Sign in - Google Accounts" || tabsArray[i].title === "Google Keep"){
+				thunderkeepplus.debug("Switch to tab \"" + tabsArray[i].title + "\"");
 			
-			tabManager.switchToTab(i);
-			return;
+				tabManager.switchToTab(i);
+				return;
+			}
 		}
-	}
 
-	thunderkeepplus.debug("Tab no found, opening new one");
+		thunderkeepplus.debug("Tab no found, opening new one");
 	
-	tabManager.openTab("contentTab", {contentPage: "http://keep.google.com"});
+		tabManager.openTab("contentTab", {contentPage: "http://keep.google.com"});
 	
-	thunderkeepplus.debug("Tab successfully created");
+		thunderkeepplus.debug("Tab successfully created");
+	} catch(e) { alert("Error opening/swithing to Google Keep tab: " + e); }
 }
 };
 
