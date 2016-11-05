@@ -21,12 +21,12 @@ onLoad: function() {
 		if (prefBranch && prefBranch.getPrefType("installComplete") == prefBranch.PREF_BOOL){
 			installButton = !prefBranch.getBoolPref("installComplete");
 		}
-		thunderkeepplus.debug("InstallComplete is " + !installButton);
+		thunderkeepplus.debug("installComplete is " + !installButton);
 		
 		if (installButton) {
 			thunderkeepplus.debug("Installing button");
 			// Find the navigation bar and append the CloseAllTabs button
-			prefBranch.setBoolPref("InstallComplete", true);
+			prefBranch.setBoolPref("installComplete", true);
 			let mainNavBar = document.getElementById("mail-bar3");
 			
 			if(!mainNavBar || !mainNavBar.currentSet) {
@@ -60,6 +60,49 @@ onLoad: function() {
 	} catch(e) { alert("Error ThunderKeepPlus onLoad: " + e); }
 },
 
+setInstallComplete: function(value){
+	let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
+	prefBranch = prefBranch.getBranch("extensions.thunderkeepplus@gmail.com.");
+	prefBranch.setBoolPref("installComplete", value);
+},
+
+beingDisabled: false,
+beingUninstalled: false,
+
+onUninstalling: function(addon, needsRestart) {
+	if (addon.id == "thunderkeepplus@gmail.com") {
+		thunderkeepplus.debug("uninstalling");
+		thunderkeepplus.beingUninstalled = true;
+		thunderkeepplus.setInstallComplete(false);
+	}
+},
+
+// TODO Implement disable
+onDisabling: function(addon){
+thunderkeepplus.debug("onDisabling");
+	if (addon.id == "thunderkeepplus@gmail.com") {
+		thunderkeepplus.debug("disabling");
+		beingDisabled = true;
+	}
+},
+
+onOperationCancelled: function(addon) {
+	if (addon.id == "thunderkeepplus@gmail.com"){
+		if (!(addon.pendingOperations & AddonManager.PENDING_UNINSTALL) && thunderkeepplus.beingUninstalled) {
+			thunderkeepplus.debug("uninstall cancelled");
+			thunderkeepplus.beingUninstalled = false;
+			thunderkeepplus.setInstallComplete(true);
+		 	return;
+		}
+		if (!(addon.pendingOperations & AddonManager.PENDING_DISABLE) && thunderkeepplus.beingDisabled) {
+			thunderkeepplus.debug("disable cancelled");
+			thunderkeepplus.beingDisabled = false;
+		 	return;
+		}
+
+	}
+},
+
 onToolbarButtonCommand: function(e) {
 
 	// Open a new tab with Google Keep or focus on the already opened one
@@ -91,3 +134,6 @@ onToolbarButtonCommand: function(e) {
 };
 
 window.addEventListener("load", thunderkeepplus.onLoad, false);
+
+Components.utils.import("resource://gre/modules/AddonManager.jsm");
+AddonManager.addAddonListener(thunderkeepplus);
