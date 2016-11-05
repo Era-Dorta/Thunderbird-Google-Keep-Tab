@@ -1,6 +1,6 @@
 var thunderkeepplus = {
 /* Simple debugging to the error console */
-enableDebug: false,
+enableDebug: true,
 debug: function (aMessage) {
 	if(thunderkeepplus.enableDebug) {
 		let consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
@@ -61,26 +61,20 @@ onLoad: function() {
 },
 
 onToolbarButtonCommand: function(e) {
-	// Open a new tab with Google Calendar
-    let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
-    let tabManager = mailPane.document.getElementById("tabmail");
-    //let allTabs = tabManager.getTabs("contentTab");
-    let allTabs = mailPane.document.getElementById("tabmail");
-    
-    //mailPane.document.getElementById("tabmail").openTab("contentTab", {contentPage: "http://keep.google.com", type: "googlekeep"});
 
-	let isTabOpen = false;
-    for (i = 0; i < allTabs.length; i++) { 
-    	if(tabManager.getTabTitle(allTabs[i])){
-    		isTabOpen =  true;
-    		break;
-    	}
-    }
-    
-    if(!isTabOpen){
-        let thunderkeepplustab = tabManager.openTab("contentTab", {contentPage: "http://keep.google.com", type: "googlekeep"});
-    	tabManager.setTabTitle(thunderkeepplustab, "Google Keep");
-    }
+	// Open a new tab with Google Calendar or focus on the already opened one
+	let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+	let tabManager = mailPane.document.getElementById("tabmail");
+	let tabsArray = tabManager.tabInfo;
+
+	for (i = 0; i < tabsArray.length; i++) {
+		if(tabsArray[i].title === "Sign in - Google Accounts" || tabsArray[i].title === "Google Keep"){
+			tabsArray[i].focus();
+			return;
+		}
+	}
+
+	tabManager.openTab("contentTab", {contentPage: "http://keep.google.com", type: "googlekeep"});
 }
 };
 
