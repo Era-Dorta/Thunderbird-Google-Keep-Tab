@@ -1,6 +1,6 @@
 var thunderkeepplus = {
 /* Simple debugging to the error console */
-enableDebug: true,
+enableDebug: false,
 debug: function (aMessage) {
 	if(thunderkeepplus.enableDebug) {
 		let consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
@@ -62,18 +62,26 @@ onLoad: function() {
 
 onToolbarButtonCommand: function(e) {
 
-	// Open a new tab with Google Calendar or focus on the already opened one
+	// Open a new tab with Google Keep or focus on the already opened one
 	let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 	let tabManager = mailPane.document.getElementById("tabmail");
 	let tabsArray = tabManager.tabInfo;
-
+	
+	thunderkeepplus.debug("Found " + String(tabsArray.length) + " tabs");
+	
 	for (i = 0; i < tabsArray.length; i++) {
+		thunderkeepplus.debug("Tab " + i + " is " + tabsArray[i].title);
+		
 		if(tabsArray[i].title === "Sign in - Google Accounts" || tabsArray[i].title === "Google Keep"){
-			tabsArray[i].focus();
+			thunderkeepplus.debug("Switch to tab " + tabsArray[i].title);
+			
+			tabManager.switchToTab(i);
 			return;
 		}
 	}
 
+	thunderkeepplus.debug("Tab no found, opening new one");
+	
 	tabManager.openTab("contentTab", {contentPage: "http://keep.google.com", type: "googlekeep"});
 }
 };
