@@ -107,6 +107,11 @@ onToolbarButtonCommand: function(e) {
 
 	// Open a new tab with Google Keep or focus on the already opened one
 	try{
+	
+		let strings = new StringBundle("chrome://thunderkeepplus/locale/overlay.properties");
+		thunderkeepplus.debug("tabTitle1 is \"" + strings.get("tabTitle1") + "\"");
+		thunderkeepplus.debug("tabTitle2 is \"" + strings.get("tabTitle2") + "\"");
+	
 		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 		let tabManager = mailPane.document.getElementById("tabmail");
 		let tabsArray = tabManager.tabInfo;
@@ -116,7 +121,7 @@ onToolbarButtonCommand: function(e) {
 		for (i = 0; i < tabsArray.length; i++) {
 			thunderkeepplus.debug("Tab " + i + " is \"" + tabsArray[i].title + "\"");
 		
-			if(tabsArray[i].title === "Sign in - Google Accounts" || tabsArray[i].title === "Google Keep"){
+			if(tabsArray[i].title === strings.get("tabTitle1") || tabsArray[i].title === strings.get("tabTitle2")){
 				thunderkeepplus.debug("Switch to tab \"" + tabsArray[i].title + "\"");
 			
 				tabManager.switchToTab(i);
@@ -128,7 +133,7 @@ onToolbarButtonCommand: function(e) {
 	
 		tabManager.openTab("contentTab", {contentPage: "http://keep.google.com"});
 	
-		thunderkeepplus.debug("Tab successfully created");
+		thunderkeepplus.debug("Tab opened successfully");
 	} catch(e) { alert("Error ThunderKeepPlus onToolbarButtonCommand: " + e); }
 }
 };
