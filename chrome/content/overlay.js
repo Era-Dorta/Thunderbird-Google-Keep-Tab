@@ -1,3 +1,44 @@
+function tkpShutdownObserver()
+{
+  this.register();
+}
+tkpShutdownObserver.prototype = {
+	observe: function(subject, topic, data) {
+		
+		let consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
+
+		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+		let tabManager = mailPane.document.getElementById("tabmail");
+		let tabsArray = tabManager.tabInfo;
+
+		let googleKeepTabId = thunderkeepplus.getGoogleKeepTabId();
+
+		// Manually update the tabId so that it matches the one it will have next time thunderbird restarts
+		let j = 0; // Tab numbers will start from zero
+		for (i = 0; i < tabsArray.length; i++) {
+			let tabBrowser = tabsArray[i].browser;
+			if(tabBrowser && tabBrowser.id.includes("contentTabBrowser")){
+				if(googleKeepTabId.localeCompare(tabBrowser.id) === 0){
+					thunderkeepplus.setGoogleKeepTabId("contentTabBrowser" + j);
+					break;
+				}
+				j++;		
+			}
+		}
+		this.unregister();
+	},
+	register: function() {
+		var observerService = Components.classes["@mozilla.org/observer-service;1"]
+			.getService(Components.interfaces.nsIObserverService);
+		observerService.addObserver(this, "quit-application-granted", false);
+	},
+	unregister: function() {
+		var observerService = Components.classes["@mozilla.org/observer-service;1"]
+			.getService(Components.interfaces.nsIObserverService);
+		observerService.removeObserver(this, "quit-application-granted");
+	}
+};
+
 var thunderkeepplus = {
 /* Simple debugging to the error console */
 enableDebug: true,
@@ -131,15 +172,17 @@ onToolbarButtonCommand: function(e) {
 		thunderkeepplus.debug("Found " + String(tabsArray.length) + " tabs");
 		thunderkeepplus.debug("Gtab browser id is \"" + googleKeepTabId + "\"");
 	
-		for (i = 0; i < tabsArray.length; i++) {
-			thunderkeepplus.debug("Tab " + i + " is \"" + tabsArray[i].title + "\"");
-			
+		for (i = 0; i < tabsArray.length; i++) {			
 			let tabBrowser = tabsArray[i].browser;
-			if(googleKeepTabId.localeCompare("thunderkeepplus:" + tabsArray[i].title) === 0){
-					thunderkeepplus.debug("Switch to tab \"" + tabsArray[i].title + "\"");
-					
+			if(tabBrowser){
+				thunderkeepplus.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + tabsArray[i].title + "\"");
+				if(googleKeepTabId.localeCompare(tabBrowser.id) === 0){
+					thunderkeepplus.debug("Switching to tab " + i);
 					tabManager.switchToTab(i);
 					return;
+				}
+			} else {
+				thunderkeepplus.debug("Tab " + i + " without id and title \"" + tabsArray[i].title + "\"");
 			}
 		}
 
@@ -149,8 +192,7 @@ onToolbarButtonCommand: function(e) {
 	
 		thunderkeepplus.debug("Tab opened successfully");
 		
-		
-		thunderkeepplus.setGoogleKeepTabId("thunderkeepplus:" + tabsArray[i].title);
+		thunderkeepplus.setGoogleKeepTabId(gtab.browser.id);
 		
 		thunderkeepplus.debug("Tab id " + thunderkeepplus.getGoogleKeepTabId() + " saved");	
 		
@@ -162,3 +204,5 @@ window.addEventListener("load", thunderkeepplus.onLoad, false);
 
 Components.utils.import("resource://gre/modules/AddonManager.jsm");
 AddonManager.addAddonListener(thunderkeepplus);
+
+let observer = new tkpShutdownObserver();
