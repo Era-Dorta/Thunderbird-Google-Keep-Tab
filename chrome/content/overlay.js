@@ -1,6 +1,6 @@
 var thunderkeepplus = {
 /* Simple debugging to the error console */
-enableDebug: false,
+enableDebug: true,
 debug: function (aMessage) {
 	if(thunderkeepplus.enableDebug) {
 		let consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
@@ -118,8 +118,24 @@ onOperationCancelled: function(addon) {
 	}
 },
 
-onThunderKeepPlusTabClose: function(){
-	thunderkeepplus.debug("Closing tab");
+onTabTitleChanged: function(aTab){
+	thunderkeepplus.setGoogleKeepTabId("thunderkeepplus:" + aTab.title);
+	thunderkeepplus.debug("New tab title " + aTab.browser.contentTitle);
+},
+
+onTabSwitched: function(aTab, aOldTab){
+},
+
+onTabOpened: function(aTab, aIsFirstTab, aWasCurrentTab){
+},
+
+onTabClosing: function(aTab){
+},
+
+onTabPersist: function(aTab){
+},
+
+onTabRestored: function(aTab, aState, aIsFirstTab){
 },
 
 onToolbarButtonCommand: function(e) {
@@ -139,14 +155,11 @@ onToolbarButtonCommand: function(e) {
 			thunderkeepplus.debug("Tab " + i + " is \"" + tabsArray[i].title + "\"");
 			
 			let tabBrowser = tabsArray[i].browser;
-			if(tabBrowser){
-				thunderkeepplus.debug("Tab browser id is \"" + tabsArray[i].browser.id + "\"");
-				if(tabBrowser.id == googleKeepTabId){
+			if(googleKeepTabId.localeCompare("thunderkeepplus:" + tabsArray[i].title) === 0){
 					thunderkeepplus.debug("Switch to tab \"" + tabsArray[i].title + "\"");
 					
 					tabManager.switchToTab(i);
 					return;
-				}
 			}
 		}
 
@@ -156,9 +169,11 @@ onToolbarButtonCommand: function(e) {
 	
 		thunderkeepplus.debug("Tab opened successfully");
 		
-		thunderkeepplus.setGoogleKeepTabId(gtab.browser.id);
+		tabManager.registerTabMonitor(thunderkeepplus);		
 		
-		thunderkeepplus.debug("Tab id " + gtab.browser.id + " saved");
+		thunderkeepplus.setGoogleKeepTabId("thunderkeepplus:" + tabsArray[i].title);
+		
+		thunderkeepplus.debug("Tab id " + thunderkeepplus.getGoogleKeepTabId() + " saved");	
 		
 	} catch(e) { alert("Error ThunderKeepPlus onToolbarButtonCommand: " + e); }
 }
