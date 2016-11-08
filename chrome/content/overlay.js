@@ -118,26 +118,6 @@ onOperationCancelled: function(addon) {
 	}
 },
 
-onTabTitleChanged: function(aTab){
-	thunderkeepplus.setGoogleKeepTabId("thunderkeepplus:" + aTab.title);
-	thunderkeepplus.debug("New tab title " + aTab.browser.contentTitle);
-},
-
-onTabSwitched: function(aTab, aOldTab){
-},
-
-onTabOpened: function(aTab, aIsFirstTab, aWasCurrentTab){
-},
-
-onTabClosing: function(aTab){
-},
-
-onTabPersist: function(aTab){
-},
-
-onTabRestored: function(aTab, aState, aIsFirstTab){
-},
-
 onToolbarButtonCommand: function(e) {
 
 	// Open a new tab with Google Keep or focus on the already opened one
@@ -169,7 +149,6 @@ onToolbarButtonCommand: function(e) {
 	
 		thunderkeepplus.debug("Tab opened successfully");
 		
-		tabManager.registerTabMonitor(thunderkeepplus);		
 		
 		thunderkeepplus.setGoogleKeepTabId("thunderkeepplus:" + tabsArray[i].title);
 		
