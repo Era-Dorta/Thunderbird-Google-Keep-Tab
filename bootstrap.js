@@ -14,10 +14,12 @@ const extensionLink = 'chrome://ThunderKeepPlus/',
       contentLink = extensionLink + 'content/',
       uiModuleLink = contentLink + 'ui.jsm',
       defaultPreferencesLoaderLink = contentLink + 'lib/defaultPreferencesLoader.jsm';
+      mainScriptLink = contentLink + 'overlay.js';
 
 function startup(data,reason) {
+    Cu.import(mainScriptLink);
     Cu.import(uiModuleLink);
-
+		
     loadDefaultPreferences(data.installPath);
     loadThunderKeepPlus();
 }
@@ -35,11 +37,11 @@ function shutdown(data,reason) {
     Services.obs.notifyObservers(null, "chrome-flush-caches", null);
 }
 function loadThunderKeepPlus() {
-    oldScriptsImporter.addOnUiRegistered();
+	
     ui.attach();
 }
 function unloadThunderKeepPlus() {
-    oldScriptsImporter.remove();
+
     ui.destroy();
 }
 function loadDefaultPreferences(installPath) {

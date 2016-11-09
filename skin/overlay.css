@@ -1,6 +1,6 @@
 #thunderkeepplus-toolbar-button
 {
-  list-style-image: url("chrome://thunderkeepplus/skin/google_keep_logo_large.png") !important;
+  list-style-image: url("chrome://ThunderKeepPlus/skin/google_keep_logo_large.png") !important;
   /*-moz-image-region: rect(0px 24px 24px 0px);*/
 }
 #thunderkeepplus-toolbar-button:hover

@@ -1,6 +1,8 @@
-content   thunderkeepplus                 chrome/content/
-skin      thunderkeepplus   classic/1.0   chrome/skin/
-locale    thunderkeepplus   en-US         chrome/locale/en-US/
-locale	  thunderkeepplus   de	          chrome/locale/de/
-locale	  thunderkeepplus   es-ES	      chrome/locale/es-ES/
+content ThunderKeepPlus content/
+content ThunderKeepPlus content/ contentaccessible=yes
+
+skin      ThunderKeepPlus   classic/1.0   skin/
+locale    ThunderKeepPlus   en-US         locale/en-US/
+locale	  ThunderKeepPlus   de	          locale/de/
+locale	  ThunderKeepPlus   es-ES	      locale/es-ES/
 

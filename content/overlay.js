@@ -1,4 +1,4 @@
-function tkpShutdownObserver()
+/*function tkpShutdownObserver()
 {
   this.register();
 }
@@ -37,7 +37,7 @@ tkpShutdownObserver.prototype = {
 			.getService(Components.interfaces.nsIObserverService);
 		observerService.removeObserver(this, "quit-application-granted");
 	}
-};
+};*/
 
 var thunderkeepplus = {
 /* Simple debugging to the error console */
@@ -55,7 +55,7 @@ onLoad: function() {
  	// If the completeInstall flag is true, the button has already been installed
 	try{
 		thunderkeepplus.debug("start");
-		let installButton = true;
+		/*let installButton = true;
 		let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 		
 		prefBranch = prefBranch.getBranch("extensions.thunderkeepplus@gmail.com.");
@@ -97,13 +97,13 @@ onLoad: function() {
 				} catch (e) { }
 				thunderkeepplus.debug("Button successfully installed");
 			} 
-		}
+		}*/
 	} catch(e) { alert("Error ThunderKeepPlus onLoad: " + e); }
 },
 
 getPrefBranch: function(){
 	let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
-	prefBranch = prefBranch.getBranch("extensions.thunderkeepplus@gmail.com.");
+	prefBranch = prefBranch.getBranch("extensions.thunderkeepplus.");
 	return prefBranch;
 },
 
@@ -122,7 +122,7 @@ getGoogleKeepTabId: function(){
 	return prefBranch.getCharPref("googleKeepTabId");
 },
 
-beingDisabled: false,
+/*beingDisabled: false,
 beingUninstalled: false,
 
 onUninstalling: function(addon, needsRestart) {
@@ -157,7 +157,7 @@ onOperationCancelled: function(addon) {
 		}
 
 	}
-},
+},*/
 
 onToolbarButtonCommand: function(e) {
 
@@ -200,9 +200,19 @@ onToolbarButtonCommand: function(e) {
 }
 };
 
-window.addEventListener("load", thunderkeepplus.onLoad, false);
+function thunderKeepPlusInit() {
+    thunderkeepplus.onload();
 
-Components.utils.import("resource://gre/modules/AddonManager.jsm");
-AddonManager.addAddonListener(thunderkeepplus);
+    document.getElementById("thunderkeepplus-toolbar-button").addEventListener("click", function(event) {
+        thunderkeepplus.onToolbarButtonCommand(event);
+    });
+};
 
-let observer = new tkpShutdownObserver();
+thunderKeepPlusInit();
+
+//window.addEventListener("load", thunderkeepplus.onLoad, false);
+
+//Components.utils.import("resource://gre/modules/AddonManager.jsm");
+//AddonManager.addAddonListener(thunderkeepplus);
+
+//let observer = new tkpShutdownObserver();
