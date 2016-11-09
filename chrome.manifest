@@ -4,5 +4,3 @@ locale    thunderkeepplus   en-US         chrome/locale/en-US/
 locale	  thunderkeepplus   de	          chrome/locale/de/
 locale	  thunderkeepplus   es-ES	      chrome/locale/es-ES/
 
-style chrome://global/content/customizeToolbar.xul chrome://thunderkeepplus/skin/overlay.css
-overlay chrome://messenger/content/messenger.xul chrome://thunderkeepplus/content/toolbar.xul
