@@ -9,9 +9,6 @@ const Cu = Components.utils;
 
 Cu.import('resource://gre/modules/Services.jsm');
 
-/** CustomizableUI used to create toolbar button **/
-Cu.import('resource:///modules/CustomizableUI.jsm');
-
 /** Log into console (also shown in terminal that runs firefox **/
 Cu.import("resource://gre/modules/devtools/Console.jsm");
 
@@ -63,23 +60,8 @@ Ui.prototype = {
     },
 
     createOverlay: function() {
-        var self = this; 
-
-        CustomizableUI.createWidget({
-            id: this.buttonId,
-            defaultArea: CustomizableUI.AREA_PANEL,
-            type: 'custom',
-            onBuild: function(doc) {
-                try {
-                    var overlay = self.overlayNode(doc);
-                }
-                catch (e) {
-                    console.error(e);
-                }
-
-                return overlay;
-            }
-        });
+        let mainNavBar = document.getElementById("mail-bar3");
+        return this.overlayNode(mainNavBar);
     },
 
     overlayNode: function(doc) {

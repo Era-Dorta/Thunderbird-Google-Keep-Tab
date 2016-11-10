@@ -39,22 +39,37 @@ tkpShutdownObserver.prototype = {
 	}
 };*/
 
-var thunderkeepplus = {
-/* Simple debugging to the error console */
-enableDebug: true,
-debug: function (aMessage) {
-	if(thunderkeepplus.enableDebug) {
+'use strict';
+
+var EXPORTED_SYMBOLS = ['tkpManager'];
+
+const Cu = Components.utils;
+
+Cu.import('resource://gre/modules/Services.jsm');
+
+/** Log into console (also shown in terminal that runs firefox **/
+Cu.import("resource://gre/modules/devtools/Console.jsm");
+
+var TKPManager = function()
+{
+	this.enableDebug = true;
+}
+TKPManager.prototype.debug= function (aMessage) {
+	if(this.enableDebug) {
 		let consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 		consoleService.logStringMessage("ThunderKeepPlus: " + aMessage);
 	}
-},
-
-
-onLoad: function() {
+}
+TKPManager.prototype.onLoad = function()
+{
     // initialisation code:
  	// If the completeInstall flag is true, the button has already been installed
 	try{
-		thunderkeepplus.debug("start");
+		this.debug("start");
+		
+		document.getElementById("thunderkeepplus-toolbar-button").addEventListener("click", function(event) {
+        	thunderkeepplus.onToolbarButtonCommand(event);
+    	});
 		/*let installButton = true;
 		let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 		
@@ -99,29 +114,27 @@ onLoad: function() {
 			} 
 		}*/
 	} catch(e) { alert("Error ThunderKeepPlus onLoad: " + e); }
-},
-
-getPrefBranch: function(){
+}
+TKPManager.prototype.onUnload = function()
+{
+}
+TKPManager.prototype.getPrefBranch = function(){
 	let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 	prefBranch = prefBranch.getBranch("extensions.thunderkeepplus.");
 	return prefBranch;
-},
-
-setInstallComplete: function(value){
-	let prefBranch = thunderkeepplus.getPrefBranch();
+}
+TKPManager.prototype.setInstallComplete = function(value){
+	let prefBranch = this.getPrefBranch();
 	prefBranch.setBoolPref("installComplete", value);
-},
-
-setGoogleKeepTabId: function(value){
-	let prefBranch = thunderkeepplus.getPrefBranch();
+}
+TKPManager.prototype.setGoogleKeepTabId = function(value){
+	let prefBranch = this.getPrefBranch();
 	prefBranch.setCharPref("googleKeepTabId", value);
-},
-
-getGoogleKeepTabId: function(){
-	let prefBranch = thunderkeepplus.getPrefBranch();
+}
+TKPManager.prototype.getGoogleKeepTabId = function(){
+	let prefBranch = this.getPrefBranch();
 	return prefBranch.getCharPref("googleKeepTabId");
-},
-
+}
 /*beingDisabled: false,
 beingUninstalled: false,
 
@@ -159,7 +172,7 @@ onOperationCancelled: function(addon) {
 	}
 },*/
 
-onToolbarButtonCommand: function(e) {
+TKPManager.prototype.onToolbarButtonCommand = function(e) {
 
 	// Open a new tab with Google Keep or focus on the already opened one
 	try{	
@@ -167,7 +180,7 @@ onToolbarButtonCommand: function(e) {
 		let tabManager = mailPane.document.getElementById("tabmail");
 		let tabsArray = tabManager.tabInfo;
 	
-		let googleKeepTabId = thunderkeepplus.getGoogleKeepTabId();
+		let googleKeepTabId = this.getGoogleKeepTabId();
 	
 		thunderkeepplus.debug("Found " + String(tabsArray.length) + " tabs");
 		thunderkeepplus.debug("Gtab browser id is \"" + googleKeepTabId + "\"");
@@ -198,17 +211,8 @@ onToolbarButtonCommand: function(e) {
 		
 	} catch(e) { alert("Error ThunderKeepPlus onToolbarButtonCommand: " + e); }
 }
-};
 
-function thunderKeepPlusInit() {
-    thunderkeepplus.onload();
-
-    document.getElementById("thunderkeepplus-toolbar-button").addEventListener("click", function(event) {
-        thunderkeepplus.onToolbarButtonCommand(event);
-    });
-};
-
-thunderKeepPlusInit();
+var tkpManager = new TKPManager();
 
 //window.addEventListener("load", thunderkeepplus.onLoad, false);
 
