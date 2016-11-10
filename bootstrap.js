@@ -13,14 +13,14 @@ Cu.import('resource://gre/modules/Services.jsm');
 const extensionLink = 'chrome://ThunderKeepPlus/',
 	contentLink = extensionLink + 'content/',
 	uiModuleLink = contentLink + 'ui.jsm',
-	defaultPreferencesLoaderLink = contentLink + 'lib/defaultPreferencesLoader.jsm';
 	mainScriptLink = contentLink + 'overlay.js';
+	prefsScriptLink = contentLink + 'defaultprefs.js';
 
 function startup(data,reason) {
 	Cu.import(uiModuleLink);
 	Cu.import(mainScriptLink);   
 
-loadDefaultPreferences(data.installPath);
+	loadDefaultPreferences();
 	loadThunderKeepPlus();
 }
 function shutdown(data,reason) {
@@ -44,16 +44,12 @@ function unloadThunderKeepPlus() {
 	tkpManager.onUnload();
 	ui.destroy();
 }
-function loadDefaultPreferences(installPath) {
-	Cu.import(defaultPreferencesLoaderLink);
-
-	this.defaultPreferencesLoader = new DefaultPreferencesLoader(installPath);
-	this.defaultPreferencesLoader.parseDirectory();
+function loadDefaultPreferences() {	
+	Services.scriptloader.loadSubScript(prefsScriptLink,
+		{'extensions.thunderkeepplus.googleKeepTabId':""} );
 }
 function unloadDefaultPreferences() {
-	this.defaultPreferencesLoader.clearDefaultPrefs();
 
-	Cu.unload(defaultPreferencesLoaderLink);
 }
 function install(data) {
 	/** Present here only to avoid warning on addon installation **/

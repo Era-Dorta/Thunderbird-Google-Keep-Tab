@@ -113,7 +113,7 @@ TKPManager.prototype.onLoad = function()
 				thunderkeepplus.debug("Button successfully installed");
 			} 
 		}*/
-	} catch(e) { alert("Error ThunderKeepPlus onLoad: " + e); }
+	} catch(e) { Components.utils.reportError("Error ThunderKeepPlus onLoad: " + e );}
 }
 TKPManager.prototype.onUnload = function()
 {
@@ -209,7 +209,7 @@ TKPManager.prototype.onToolbarButtonCommand = function(e) {
 		
 		thunderkeepplus.debug("Tab id " + thunderkeepplus.getGoogleKeepTabId() + " saved");	
 		
-	} catch(e) { alert("Error ThunderKeepPlus onToolbarButtonCommand: " + e); }
+	} catch(e) { Components.utils.reportError("Error ThunderKeepPlus onLoad: " + e );}
 }
 
 var tkpManager = new TKPManager();
