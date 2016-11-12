@@ -15,8 +15,10 @@ Cu.import('resource://gre/modules/Services.jsm');
 const extensionLink = 'chrome://ThunderKeepPlus/',
 	contentLink = extensionLink + 'content/',
 	uiModuleLink = contentLink + 'ui.jsm',
-	mainScriptLink = contentLink + 'overlay.js',
-	prefsScriptLink = contentLink + 'lib/defaultprefs.js';
+	mainScriptLink = contentLink + 'overlay.js';
+	
+const PREF_BRANCH = "extensions.thunderkeepplus.";
+const PREFS = {	googleKeepTabId: ""};
 
 function startup(data,reason) {
 	Cu.import(uiModuleLink);
@@ -64,8 +66,20 @@ function unloadThunderKeepPlus() {
 	ui.destroy();
 }
 function loadDefaultPreferences() {
-	Services.scriptloader.loadSubScript(prefsScriptLink,
-		{'extensions.thunderkeepplus.googleKeepTabId':""} );
+	let branch = Services.prefs.getDefaultBranch(PREF_BRANCH);
+	for (let [key, val] in Iterator(PREFS)) {
+		switch (typeof val) {
+		case "boolean":
+			branch.setBoolPref(key, val);
+			break;
+		case "number":
+			branch.setIntPref(key, val);
+			break;
+		case "string":
+			branch.setCharPref(key, val);
+			break;
+		}
+	}
 }
 function unloadDefaultPreferences() {
 

@@ -192,7 +192,7 @@ TKPManager.prototype.onToolbarButtonClick = function() {
 		this.debug("Found " + String(tabsArray.length) + " tabs");
 		this.debug("Gtab browser id is \"" + googleKeepTabId + "\"");
 	
-		for (i = 0; i < tabsArray.length; i++) {			
+		for (let i = 0; i < tabsArray.length; i++) {			
 			let tabBrowser = tabsArray[i].browser;
 			if(tabBrowser){
 				this.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + tabsArray[i].title + "\"");
