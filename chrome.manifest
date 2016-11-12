@@ -5,4 +5,7 @@ skin      ThunderKeepPlus   classic/1.0   skin/
 locale    ThunderKeepPlus   en-US         locale/en-US/
 locale	  ThunderKeepPlus   de	          locale/de/
 locale	  ThunderKeepPlus   es-ES	      locale/es-ES/
-
+locale	  ThunderKeepPlus   it	          locale/it/
+locale	  ThunderKeepPlus   fr	          locale/fr/
+locale	  ThunderKeepPlus   ru	          locale/ru/
+locale	  ThunderKeepPlus   pt	          locale/pt/

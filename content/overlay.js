@@ -13,7 +13,7 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 
 var TKPManager = function()
 {
-	this.enableDebug = false;
+	this.enableDebug = true;
 	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 	this.strings = Services.strings.createBundle('chrome://ThunderKeepPlus/locale/overlay.properties?' + Math.random());
 	this.mailPane = null;
