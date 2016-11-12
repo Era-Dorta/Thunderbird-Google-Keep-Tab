@@ -17,24 +17,22 @@ const extensionLink = 'chrome://ThunderKeepPlus/',
 	uiModuleLink = contentLink + 'ui.jsm',
 	mainScriptLink = contentLink + 'overlay.js';
 	
-const PREF_BRANCH = "extensions.thunderkeepplus.";
-const PREFS = {	googleKeepTabId: ""};
+const PREF_BRANCH = "";
+const PREFS = {};
 
 function startup(data,reason) {
 	Cu.import(uiModuleLink);
 	Cu.import(mainScriptLink);
 
-	loadDefaultPreferences();
+	//loadDefaultPreferences();
 	loadThunderKeepPlus();
 }
 function shutdown(data,reason) {
-	tkpManager.onShutdown();
-
 	if (reason == APP_SHUTDOWN){
 		return;
 	}
 	
-	unloadDefaultPreferences();
+	//unloadDefaultPreferences();
 	unloadThunderKeepPlus();
 
 	Cu.unload(uiModuleLink);
