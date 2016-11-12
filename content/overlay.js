@@ -43,6 +43,30 @@ TKPManager.prototype.onLoad = function()
 }
 TKPManager.prototype.onUnload = function()
 {
+	// Close the Google Keep tab
+	try{
+		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+		let tabManager = mailPane.document.getElementById("tabmail");
+		let tabsArray = tabManager.tabInfo;
+		
+		this.debug("Found " + String(tabsArray.length) + " tabs");
+		
+		for (let i = 0; i < tabsArray.length; i++) {
+			let tabBrowser = tabsArray[i].browser;
+			if(tabBrowser){
+				this.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + tabsArray[i].title + "\"");
+				if(tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle1')
+					|| tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle2')){
+					this.debug("Closing tab " + i);
+					tabManager.closeTab(i);
+					return;
+				}
+			} else {
+				this.debug("Tab " + i + " without id and title \"" + tabsArray[i].title + "\"");
+			}
+		}
+		
+	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onUnload: "+ e );}
 }
 TKPManager.prototype.onToolbarButtonClick = function() {
 
@@ -53,12 +77,12 @@ TKPManager.prototype.onToolbarButtonClick = function() {
 		let tabsArray = tabManager.tabInfo;
 		
 		this.debug("Found " + String(tabsArray.length) + " tabs");
-	
-		for (let i = 0; i < tabsArray.length; i++) {			
+		
+		for (let i = 0; i < tabsArray.length; i++) {
 			let tabBrowser = tabsArray[i].browser;
 			if(tabBrowser){
 				this.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + tabsArray[i].title + "\"");
-				if(tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle1') 
+				if(tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle1')
 					|| tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle2')){
 					this.debug("Switching to tab " + i);
 					tabManager.switchToTab(i);
@@ -68,13 +92,13 @@ TKPManager.prototype.onToolbarButtonClick = function() {
 				this.debug("Tab " + i + " without id and title \"" + tabsArray[i].title + "\"");
 			}
 		}
-
+		
 		this.debug("Tab no found, opening new one");
-	
+		
 		let gtab = tabManager.openTab("contentTab", {contentPage: "http://keep.google.com"});
-	
+		
 		this.debug("Tab opened successfully");
-				
+		
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onToolbarButtonClick: "+ e );}
 }
 
