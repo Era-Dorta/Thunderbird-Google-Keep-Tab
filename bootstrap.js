@@ -82,7 +82,8 @@ function loadDefaultPreferences() {
 	}
 }
 function unloadDefaultPreferences() {
-
+	let branch = Services.prefs.getDefaultBranch(PREF_BRANCH);
+	branch.deleteBranch("");
 }
 function install(data) {
 	/** Present here only to avoid warning on addon installation **/
