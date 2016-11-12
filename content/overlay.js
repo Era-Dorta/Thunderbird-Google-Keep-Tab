@@ -44,6 +44,7 @@ tkpShutdownObserver.prototype = {
 var EXPORTED_SYMBOLS = ['tkpManager'];
 
 const Cu = Components.utils;
+const Ci = Components.interfaces;
 
 Cu.import('resource://gre/modules/Services.jsm');
 
@@ -54,6 +55,7 @@ var TKPManager = function()
 {
 	this.enableDebug = true;
 	this.document = null;
+	this.prompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 }
 TKPManager.prototype.debug= function (aMessage) {
 	if(this.enableDebug) {
@@ -114,7 +116,7 @@ TKPManager.prototype.onLoad = function()
 				thunderkeepplus.debug("Button successfully installed");
 			} 
 		}*/
-	} catch(e) { Components.utils.reportError("Error ThunderKeepPlus onLoad: " + e );}
+	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onLoad: " + e);}
 }
 TKPManager.prototype.onUnload = function()
 {
@@ -210,7 +212,7 @@ TKPManager.prototype.onToolbarButtonCommand = function(e) {
 		
 		thunderkeepplus.debug("Tab id " + thunderkeepplus.getGoogleKeepTabId() + " saved");	
 		
-	} catch(e) { Components.utils.reportError("Error ThunderKeepPlus onLoad: " + e );}
+	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onToolbarButtonCommand: "+ e );}
 }
 
 var tkpManager = new TKPManager();
