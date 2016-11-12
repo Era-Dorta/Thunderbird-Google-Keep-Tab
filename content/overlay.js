@@ -12,9 +12,10 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 
 var TKPManager = function()
 {
-	this.enableDebug = true;
+	this.enableDebug = false;
 	this.document = null;
 	this.prompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
+	this.strings = Services.strings.createBundle('chrome://ThunderKeepPlus/locale/overlay.properties?' + Math.random());
 }
 TKPManager.prototype.debug= function (aMessage) {
 	if(this.enableDebug) {
@@ -32,7 +33,10 @@ TKPManager.prototype.onLoad = function()
 		var self = this;
 		customButton.addEventListener("click", function() {
         	self.onToolbarButtonClick();
-    	});    	    	
+    	});
+    	
+    	this.debug("tabTitle1 is:\"" + this.strings.GetStringFromName('ThunderKeepPlus.tabTitle1') + 
+			"\" and 2 is:\"" + this.strings.GetStringFromName('ThunderKeepPlus.tabTitle2') + "\"");
 
 		this.debug("TKPManager added onClick event listener");
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onLoad: " + e);}
@@ -44,11 +48,6 @@ TKPManager.prototype.onToolbarButtonClick = function() {
 
 	// Open a new tab with Google Keep or focus on the already opened one
 	try{
-	
-		let strings = new StringBundle("chrome://ThunderKeepPlus/locale/overlay.properties");
-		this.debug("tabTitle1 and 2 are \"" + strings.GetStringFromName('ThunderKeepPlus.tabTitle1') + 
-			"\"" + strings.GetStringFromName('ThunderKeepPlus.tabTitle2') + "\"");
-
 		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 		let tabManager = mailPane.document.getElementById("tabmail");
 		let tabsArray = tabManager.tabInfo;
@@ -59,8 +58,8 @@ TKPManager.prototype.onToolbarButtonClick = function() {
 			let tabBrowser = tabsArray[i].browser;
 			if(tabBrowser){
 				this.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + tabsArray[i].title + "\"");
-				if(tabsArray[i].title === strings.GetStringFromName('ThunderKeepPlus.tabTitle1') 
-					|| tabsArray[i].title === strings.get("tabTitle2")){
+				if(tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle1') 
+					|| tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle2')){
 					this.debug("Switching to tab " + i);
 					tabManager.switchToTab(i);
 					return;
