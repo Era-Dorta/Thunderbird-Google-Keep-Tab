@@ -4,6 +4,7 @@ var EXPORTED_SYMBOLS = ['tkpManager'];
 
 const Cu = Components.utils;
 const Ci = Components.interfaces;
+const Cc = Components.classes;
 
 Cu.import('resource://gre/modules/Services.jsm');
 
@@ -12,14 +13,14 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 
 var TKPManager = function()
 {
-	this.enableDebug = false;
+	this.enableDebug = true;
 	this.document = null;
-	this.prompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
+	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 	this.strings = Services.strings.createBundle('chrome://ThunderKeepPlus/locale/overlay.properties?' + Math.random());
 }
 TKPManager.prototype.debug= function (aMessage) {
 	if(this.enableDebug) {
-		let consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+		let consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 		consoleService.logStringMessage("ThunderKeepPlus: " + aMessage);
 	}
 }
@@ -45,7 +46,7 @@ TKPManager.prototype.onUnload = function()
 {
 	// Close the Google Keep tab
 	try{
-		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+		let mailPane = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 		let tabManager = mailPane.document.getElementById("tabmail");
 		let tabsArray = tabManager.tabInfo;
 		
@@ -72,7 +73,7 @@ TKPManager.prototype.onToolbarButtonClick = function() {
 
 	// Open a new tab with Google Keep or focus on the already opened one
 	try{
-		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+		let mailPane = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 		let tabManager = mailPane.document.getElementById("tabmail");
 		let tabsArray = tabManager.tabInfo;
 		
