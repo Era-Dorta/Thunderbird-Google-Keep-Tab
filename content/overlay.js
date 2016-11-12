@@ -53,6 +53,7 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 var TKPManager = function()
 {
 	this.enableDebug = true;
+	this.document = null;
 }
 TKPManager.prototype.debug= function (aMessage) {
 	if(this.enableDebug) {
@@ -67,7 +68,7 @@ TKPManager.prototype.onLoad = function()
 	try{
 		this.debug("start");
 		
-		document.getElementById("thunderkeepplus-toolbar-button").addEventListener("click", function(event) {
+		this.document.getElementById("thunderkeepplus-toolbar-button").addEventListener("click", function(event) {
         	thunderkeepplus.onToolbarButtonCommand(event);
     	});
 		/*let installButton = true;

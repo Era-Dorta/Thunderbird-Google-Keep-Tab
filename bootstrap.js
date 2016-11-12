@@ -7,6 +7,8 @@
  */
 
 const Cu = Components.utils;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
 Cu.import('resource://gre/modules/Services.jsm');
 
@@ -14,19 +16,20 @@ const extensionLink = 'chrome://ThunderKeepPlus/',
 	contentLink = extensionLink + 'content/',
 	uiModuleLink = contentLink + 'ui.jsm',
 	mainScriptLink = contentLink + 'overlay.js';
-	prefsScriptLink = contentLink + 'defaultprefs.js';
+	prefsScriptLink = contentLink + 'lib/defaultprefs.js';
 
 function startup(data,reason) {
 	Cu.import(uiModuleLink);
-	Cu.import(mainScriptLink);   
+	Cu.import(mainScriptLink);
 
 	loadDefaultPreferences();
 	loadThunderKeepPlus();
 }
 function shutdown(data,reason) {
-	if (reason == APP_SHUTDOWN)
-	return;
-
+	if (reason == APP_SHUTDOWN){
+		return;
+	}
+	
 	unloadDefaultPreferences();
 	unloadThunderKeepPlus();
 
@@ -37,6 +40,22 @@ function shutdown(data,reason) {
 	Services.obs.notifyObservers(null, "chrome-flush-caches", null);
 }
 function loadThunderKeepPlus() {
+
+  let wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
+
+  // For thunderbird we only care about the first window
+	let windows = wm.getEnumerator(null);
+	if(windows.hasMoreElements()) {
+		let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+		let document = domWindow.document;
+		
+		tkpManager.document = document;
+		ui.document = document;
+	} else {
+		// Error here
+		return;
+	}
+
 	tkpManager.onLoad();
 	ui.attach();
 }
@@ -44,7 +63,7 @@ function unloadThunderKeepPlus() {
 	tkpManager.onUnload();
 	ui.destroy();
 }
-function loadDefaultPreferences() {	
+function loadDefaultPreferences() {
 	Services.scriptloader.loadSubScript(prefsScriptLink,
 		{'extensions.thunderkeepplus.googleKeepTabId':""} );
 }
@@ -57,3 +76,4 @@ function install(data) {
 function uninstall() {
 	/** Present here only to avoid warning on addon removal **/
 }
+

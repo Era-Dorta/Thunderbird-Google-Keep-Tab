@@ -44,24 +44,26 @@ function Ui() {
 
     /** Import localization properties **/
     this.stringBundle = Services.strings.createBundle('chrome://ThunderKeepPlus/locale/overlay.properties?' + Math.random()); // Randomize URI to work around bug 719376
+    this.document = null;
 }
 
 Ui.prototype = {
     attach: function() {
-        this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
+        //this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
 
         this.createOverlay();
     },
 
     destroy: function() {
-        CustomizableUI.destroyWidget(this.buttonId);
-        if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET))
-            this.sss.unregisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
+        //CustomizableUI.destroyWidget(this.buttonId);
+        //if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET))
+         //   this.sss.unregisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
     },
 
     createOverlay: function() {
-        let mainNavBar = document.getElementById("mail-bar3");
-        return this.overlayNode(mainNavBar);
+        let mainNavBar = this.document.getElementById("mail-bar3");
+        let newOverlay = this.overlayNode(mainNavBar);
+        return newOverlay;
     },
 
     overlayNode: function(doc) {
