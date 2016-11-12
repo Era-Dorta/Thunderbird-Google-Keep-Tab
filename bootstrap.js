@@ -15,7 +15,7 @@ Cu.import('resource://gre/modules/Services.jsm');
 const extensionLink = 'chrome://ThunderKeepPlus/',
 	contentLink = extensionLink + 'content/',
 	uiModuleLink = contentLink + 'ui.jsm',
-	mainScriptLink = contentLink + 'overlay.js';
+	mainScriptLink = contentLink + 'overlay.js',
 	prefsScriptLink = contentLink + 'lib/defaultprefs.js';
 
 function startup(data,reason) {
@@ -56,8 +56,8 @@ function loadThunderKeepPlus() {
 		return;
 	}
 
-	tkpManager.onLoad();
 	ui.attach();
+	tkpManager.onLoad();
 }
 function unloadThunderKeepPlus() {
 	tkpManager.onUnload();
