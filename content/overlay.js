@@ -59,7 +59,7 @@ var TKPManager = function()
 }
 TKPManager.prototype.debug= function (aMessage) {
 	if(this.enableDebug) {
-		let consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
+		let consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 		consoleService.logStringMessage("ThunderKeepPlus: " + aMessage);
 	}
 }
@@ -122,7 +122,7 @@ TKPManager.prototype.onUnload = function()
 {
 }
 TKPManager.prototype.getPrefBranch = function(){
-	let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
+	let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService);
 	prefBranch = prefBranch.getBranch("extensions.thunderkeepplus.");
 	return prefBranch;
 }
@@ -179,7 +179,7 @@ TKPManager.prototype.onToolbarButtonCommand = function(e) {
 
 	// Open a new tab with Google Keep or focus on the already opened one
 	try{	
-		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 		let tabManager = mailPane.document.getElementById("tabmail");
 		let tabsArray = tabManager.tabInfo;
 	
