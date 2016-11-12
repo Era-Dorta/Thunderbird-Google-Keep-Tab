@@ -13,7 +13,7 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 
 var TKPManager = function()
 {
-	this.enableDebug = true;
+	this.enableDebug = false;
 	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 	this.strings = Services.strings.createBundle('chrome://ThunderKeepPlus/locale/overlay.properties?' + Math.random());
 	this.mailPane = null;
@@ -45,11 +45,12 @@ TKPManager.prototype.onLoad = function(document)
 		this.tabManager = this.mailPane.document.getElementById("tabmail");
 		this.tabsArray = this.tabManager.tabInfo;
 
-		this.debug("TKPManager added onClick event listener");
+		this.debug("TKPManager onLoad successfull");
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onLoad: " + e);}
 }
 TKPManager.prototype.onUnload = function()
 {
+	this.debug("TKPManager onUnLoad");
 	// Close the Google Keep tab
 	try{		
 		this.debug("Found " + String(this.tabsArray.length) + " tabs");
@@ -68,7 +69,7 @@ TKPManager.prototype.onUnload = function()
 				this.debug("Tab " + i + " without id and title \"" + this.tabsArray[i].title + "\"");
 			}
 		}
-		
+		this.debug("TKPManager onUnLoad successfull");
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onUnload: "+ e );}
 }
 TKPManager.prototype.onToolbarButtonClick = function() {
