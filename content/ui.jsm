@@ -33,7 +33,7 @@ const {
  */
 function Ui() {
     this.panelNode = null;
-    this.buttonId = 'toolbar-pixel';
+    this.buttonNode = null;
 
     /** Css components initialization **/
     this.sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
@@ -55,16 +55,15 @@ Ui.prototype = {
     },
 
     destroy: function() {
-        //CustomizableUI.destroyWidget(this.buttonId);
+        this.panelNode.removeChild(this.buttonNode);
         if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET)){
             this.sss.unregisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
         }
     },
 
     createOverlay: function() {
-        let mainNavBar = this.document.getElementById("mail-bar3");
-        let newOverlay = this.overlayNode(mainNavBar);
-        return newOverlay;
+        this.panelNode = this.document.getElementById("mail-bar3");
+        this.overlayNode(this.panelNode);
     },
 
     overlayNode: function(doc) {
@@ -75,9 +74,7 @@ Ui.prototype = {
             class: 'toolbarbutton-1'
         };
 
-        var overlay = TOOLBARBUTTON(toolbarButtonAttrs);
-
-        return overlay.build(doc);
+        this.buttonNode = TOOLBARBUTTON(toolbarButtonAttrs).build(doc);
     }
 }
 
