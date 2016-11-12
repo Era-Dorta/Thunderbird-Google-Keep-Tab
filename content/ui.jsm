@@ -73,8 +73,12 @@ Ui.prototype = {
             tooltiptext: this.stringBundle.GetStringFromName('ThunderKeepPlus.tooltip'),
             class: 'toolbarbutton-1'
         };
-
-        this.buttonNode = TOOLBARBUTTON(toolbarButtonAttrs).build(doc);
+        
+        // Insert after AddressBook, we only have insert before, so get the 
+        // next node which is a separator
+        let options = {"insertBefore" : this.document.getElementById("button-address").nextSibling};
+        
+        this.buttonNode = TOOLBARBUTTON(toolbarButtonAttrs).build(doc, options);
     }
 }
 
