@@ -45,7 +45,7 @@ TKPManager.prototype.onLoad = function(document)
 		this.tabManager = this.mailPane.document.getElementById("tabmail");
 		this.tabsArray = this.tabManager.tabInfo;
 
-		this.debug("TKPManager onLoad successfull");
+		this.debug("TKPManager onLoad successful");
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onLoad: " + e);}
 }
 TKPManager.prototype.onUnload = function()
@@ -69,7 +69,7 @@ TKPManager.prototype.onUnload = function()
 				this.debug("Tab " + i + " without id and title \"" + this.tabsArray[i].title + "\"");
 			}
 		}
-		this.debug("TKPManager onUnLoad successfull");
+		this.debug("TKPManager onUnLoad successful");
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onUnload: "+ e );}
 }
 TKPManager.prototype.onToolbarButtonClick = function() {
