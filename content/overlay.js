@@ -65,65 +65,47 @@ TKPManager.prototype.debug= function (aMessage) {
 }
 TKPManager.prototype.onLoad = function()
 {
-    // initialisation code:
- 	// If the completeInstall flag is true, the button has already been installed
 	try{
-		this.debug("start");
+		this.debug("TKPManager onLoad");
 		
 		let customButton = this.document.getElementById("thunderkeepplus-toolbar-button");
 		
 		var self = this;
 		customButton.addEventListener("click", function() {
         	self.onToolbarButtonClick();
-    	});
-    	    	
-		/*let installButton = true;
-		let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
-		
-		prefBranch = prefBranch.getBranch("extensions.thunderkeepplus@gmail.com.");
-		if (prefBranch && prefBranch.getPrefType("installComplete") == prefBranch.PREF_BOOL){
-			installButton = !prefBranch.getBoolPref("installComplete");
-		}
-		thunderkeepplus.debug("installComplete is " + !installButton);
-		
-		if (installButton) {
-			thunderkeepplus.debug("Installing button");
-			// Find the navigation bar and append the CloseAllTabs button
-			prefBranch.setBoolPref("installComplete", true);
-			let mainNavBar = document.getElementById("mail-bar3");
-			
-			if(!mainNavBar || !mainNavBar.currentSet) {
-				thunderkeepplus.debug("Error installing button: toolbar not present.");
-				return;
-			}
-			
-			let curSet = mainNavBar.currentSet;
-			if (curSet.indexOf("thunderkeepplus-toolbar-button") == -1) {
-				let insertPos = curSet.indexOf("button-address");
-				if (insertPos > -1) {
-					// Insert the button after the address book button:
-					insertPos += 14; // "button-address".length
-					curSet = curSet.substring(0,insertPos) + ",thunderkeepplus-toolbar-button"+ curSet.substring(insertPos);
-				} else {
-					curSet = curSet + ",thunderkeepplus-toolbar-button";
-				}
-				
-				thunderkeepplus.debug("curSet: " + curSet);
-				
-				// Tutorial says that we have to perform the following steps
-				mainNavBar.setAttribute("currentset", curSet);
-				mainNavBar.currentSet = curSet;
-				document.persist("mail-bar3", "currentset");
-				try {
-					BrowserToolboxCustomizeDone(true);
-				} catch (e) { }
-				thunderkeepplus.debug("Button successfully installed");
-			} 
-		}*/
+    	});    	    	
+
+		this.debug("TKPManager added onClick event listener");
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onLoad: " + e);}
 }
 TKPManager.prototype.onUnload = function()
 {
+}
+TKPManager.prototype.onShutdown = function()
+{
+	try{
+		let mailPane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+		let tabManager = mailPane.document.getElementById("tabmail");
+		let tabsArray = tabManager.tabInfo;
+
+		let googleKeepTabId = this.getGoogleKeepTabId();
+
+		// Manually update the tabId so that it matches the one it will have next time thunderbird restarts
+		let j = 0; // Tab numbers will start from zero
+		for (let i = 0; i < tabsArray.length; i++) {
+			let tabBrowser = tabsArray[i].browser;
+			if(tabBrowser && tabBrowser.id.includes("contentTabBrowser")){
+				if(googleKeepTabId.localeCompare(tabBrowser.id) === 0){
+					this.setGoogleKeepTabId("contentTabBrowser" + j);
+					this.debug("Saving as contentTabBrowser" + j);
+					return;
+				}
+				j++;		
+			}
+		}
+		// If it didn't find it, the user closed the tab, set the id to empty
+		this.setGoogleKeepTabId("");
+	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onShutdown: "+ e );}
 }
 TKPManager.prototype.getPrefBranch = function(){
 	let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService);
@@ -142,43 +124,6 @@ TKPManager.prototype.getGoogleKeepTabId = function(){
 	let prefBranch = this.getPrefBranch();
 	return prefBranch.getCharPref("googleKeepTabId");
 }
-/*beingDisabled: false,
-beingUninstalled: false,
-
-onUninstalling: function(addon, needsRestart) {
-	if (addon.id == "thunderkeepplus@gmail.com") {
-		thunderkeepplus.debug("uninstalling");
-		thunderkeepplus.beingUninstalled = true;
-		thunderkeepplus.setInstallComplete(false);
-	}
-},
-
-// TODO Implement disable
-onDisabling: function(addon){
-thunderkeepplus.debug("onDisabling");
-	if (addon.id == "thunderkeepplus@gmail.com") {
-		thunderkeepplus.debug("disabling");
-		beingDisabled = true;
-	}
-},
-
-onOperationCancelled: function(addon) {
-	if (addon.id == "thunderkeepplus@gmail.com"){
-		if (!(addon.pendingOperations & AddonManager.PENDING_UNINSTALL) && thunderkeepplus.beingUninstalled) {
-			thunderkeepplus.debug("uninstall cancelled");
-			thunderkeepplus.beingUninstalled = false;
-			thunderkeepplus.setInstallComplete(true);
-		 	return;
-		}
-		if (!(addon.pendingOperations & AddonManager.PENDING_DISABLE) && thunderkeepplus.beingDisabled) {
-			thunderkeepplus.debug("disable cancelled");
-			thunderkeepplus.beingDisabled = false;
-		 	return;
-		}
-
-	}
-},*/
-
 TKPManager.prototype.onToolbarButtonClick = function() {
 
 	// Open a new tab with Google Keep or focus on the already opened one
@@ -216,14 +161,7 @@ TKPManager.prototype.onToolbarButtonClick = function() {
 		
 		this.debug("Tab id " + this.getGoogleKeepTabId() + " saved");	
 		
-	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onToolbarButtonCommand: "+ e );}
+	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onToolbarButtonClick: "+ e );}
 }
 
 var tkpManager = new TKPManager();
-
-//window.addEventListener("load", thunderkeepplus.onLoad, false);
-
-//Components.utils.import("resource://gre/modules/AddonManager.jsm");
-//AddonManager.addAddonListener(thunderkeepplus);
-
-//let observer = new tkpShutdownObserver();
