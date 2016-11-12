@@ -70,9 +70,13 @@ TKPManager.prototype.onLoad = function()
 	try{
 		this.debug("start");
 		
-		this.document.getElementById("thunderkeepplus-toolbar-button").addEventListener("click", function(event) {
-        	thunderkeepplus.onToolbarButtonCommand(event);
+		let customButton = this.document.getElementById("thunderkeepplus-toolbar-button");
+		
+		var self = this;
+		customButton.addEventListener("click", function() {
+        	self.onToolbarButtonClick();
     	});
+    	    	
 		/*let installButton = true;
 		let prefBranch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 		
@@ -175,7 +179,7 @@ onOperationCancelled: function(addon) {
 	}
 },*/
 
-TKPManager.prototype.onToolbarButtonCommand = function(e) {
+TKPManager.prototype.onToolbarButtonClick = function() {
 
 	// Open a new tab with Google Keep or focus on the already opened one
 	try{	
@@ -185,32 +189,32 @@ TKPManager.prototype.onToolbarButtonCommand = function(e) {
 	
 		let googleKeepTabId = this.getGoogleKeepTabId();
 	
-		thunderkeepplus.debug("Found " + String(tabsArray.length) + " tabs");
-		thunderkeepplus.debug("Gtab browser id is \"" + googleKeepTabId + "\"");
+		this.debug("Found " + String(tabsArray.length) + " tabs");
+		this.debug("Gtab browser id is \"" + googleKeepTabId + "\"");
 	
 		for (i = 0; i < tabsArray.length; i++) {			
 			let tabBrowser = tabsArray[i].browser;
 			if(tabBrowser){
-				thunderkeepplus.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + tabsArray[i].title + "\"");
+				this.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + tabsArray[i].title + "\"");
 				if(googleKeepTabId.localeCompare(tabBrowser.id) === 0){
-					thunderkeepplus.debug("Switching to tab " + i);
+					this.debug("Switching to tab " + i);
 					tabManager.switchToTab(i);
 					return;
 				}
 			} else {
-				thunderkeepplus.debug("Tab " + i + " without id and title \"" + tabsArray[i].title + "\"");
+				this.debug("Tab " + i + " without id and title \"" + tabsArray[i].title + "\"");
 			}
 		}
 
-		thunderkeepplus.debug("Tab no found, opening new one");
+		this.debug("Tab no found, opening new one");
 	
 		let gtab = tabManager.openTab("contentTab", {contentPage: "http://keep.google.com"});
 	
-		thunderkeepplus.debug("Tab opened successfully");
+		this.debug("Tab opened successfully");
 		
-		thunderkeepplus.setGoogleKeepTabId(gtab.browser.id);
+		this.setGoogleKeepTabId(gtab.browser.id);
 		
-		thunderkeepplus.debug("Tab id " + thunderkeepplus.getGoogleKeepTabId() + " saved");	
+		this.debug("Tab id " + this.getGoogleKeepTabId() + " saved");	
 		
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onToolbarButtonCommand: "+ e );}
 }
