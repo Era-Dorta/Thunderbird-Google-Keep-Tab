@@ -49,15 +49,16 @@ function Ui() {
 
 Ui.prototype = {
     attach: function() {
-        //this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
+        this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
 
         this.createOverlay();
     },
 
     destroy: function() {
         //CustomizableUI.destroyWidget(this.buttonId);
-        //if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET))
-         //   this.sss.unregisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
+        if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET)){
+            this.sss.unregisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
+        }
     },
 
     createOverlay: function() {
