@@ -28,6 +28,8 @@ function startup(data,reason) {
 	loadThunderKeepPlus();
 }
 function shutdown(data,reason) {
+	tkpManager.onShutdown();
+
 	if (reason == APP_SHUTDOWN){
 		return;
 	}
@@ -42,24 +44,26 @@ function shutdown(data,reason) {
 	Services.obs.notifyObservers(null, "chrome-flush-caches", null);
 }
 function loadThunderKeepPlus() {
+	let wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
 
-  let wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-
-  // For thunderbird we only care about the first window
+	// For thunderbird we only care about the first window
 	let windows = wm.getEnumerator(null);
 	if(windows.hasMoreElements()) {
-		let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
-		let document = domWindow.document;
 		
-		tkpManager.document = document;
-		ui.document = document;
+		let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+		
+		// If not ready set a listener
+		if(domWindow.document.readyState == "complete"){
+        	loadIntoWindow(domWindow);
+        } else {
+        	domWindow.addEventListener("load", loadIntoWindow);
+        }
+    
 	} else {
-		// Error here
+		// If there aren't any windows, set a listener for window opening
+		wm.addListener(WindowListener);
 		return;
 	}
-
-	ui.attach();
-	tkpManager.onLoad();
 }
 function unloadThunderKeepPlus() {
 	tkpManager.onUnload();
@@ -91,4 +95,32 @@ function install(data) {
 function uninstall() {
 	/** Present here only to avoid warning on addon removal **/
 }
+function loadIntoWindow(window) {
+	tkpManager.document = window.document;
+	ui.document = window.document;
 
+	ui.attach();
+	tkpManager.onLoad();
+}
+
+var WindowListener =
+{
+    onOpenWindow: function(xulWindow)
+    {
+        var window = xulWindow.QueryInterface(Ci.nsIInterfaceRequestor)
+                              .getInterface(Ci.nsIDOMWindow);
+        function onWindowLoad()
+        {
+			// Only need to be loaded once, so remove all the listeners
+			window.removeEventListener("load",onWindowLoad);
+
+			let wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
+			wm.removeListener(WindowListener);
+
+			loadIntoWindow(window);
+        }
+        window.addEventListener("load",onWindowLoad);
+    },
+    onCloseWindow: function(xulWindow) { },
+    onWindowTitleChange: function(xulWindow, newTitle) { }
+};
