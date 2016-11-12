@@ -50,7 +50,7 @@ function loadThunderKeepPlus() {
 		
 		let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
 		
-		// If not ready set a listener
+		// If not ready, set a listener
 		if(domWindow.document.readyState == "complete"){
         	loadIntoWindow(domWindow);
         } else {
@@ -94,11 +94,8 @@ function uninstall() {
 	/** Present here only to avoid warning on addon removal **/
 }
 function loadIntoWindow(window) {
-	tkpManager.document = window.document;
-	ui.document = window.document;
-
-	ui.attach();
-	tkpManager.onLoad();
+	ui.attach(window.document);
+	tkpManager.onLoad(window.document);
 }
 
 var WindowListener =

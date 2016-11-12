@@ -48,7 +48,8 @@ function Ui() {
 }
 
 Ui.prototype = {
-    attach: function() {
+    attach: function(document) {
+        this.document = document;
         this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
 
         this.createOverlay();

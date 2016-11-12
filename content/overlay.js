@@ -14,7 +14,6 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 var TKPManager = function()
 {
 	this.enableDebug = true;
-	this.document = null;
 	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 	this.strings = Services.strings.createBundle('chrome://ThunderKeepPlus/locale/overlay.properties?' + Math.random());
 }
@@ -24,12 +23,12 @@ TKPManager.prototype.debug= function (aMessage) {
 		consoleService.logStringMessage("ThunderKeepPlus: " + aMessage);
 	}
 }
-TKPManager.prototype.onLoad = function()
+TKPManager.prototype.onLoad = function(document)
 {
 	try{
 		this.debug("TKPManager onLoad");
 		
-		let customButton = this.document.getElementById("thunderkeepplus-toolbar-button");
+		let customButton = document.getElementById("thunderkeepplus-toolbar-button");
 		
 		var self = this;
 		customButton.addEventListener("click", function() {
