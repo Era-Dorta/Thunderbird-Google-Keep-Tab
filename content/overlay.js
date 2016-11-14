@@ -34,8 +34,8 @@ TKPManager.prototype.onLoad = function(document)
 		let customButton = document.getElementById("thunderkeepplus-toolbar-button");
 		
 		var self = this;
-		customButton.addEventListener("click", function() {
-        	self.onToolbarButtonClick();
+		customButton.addEventListener("click", function(event) {
+        	self.onToolbarButtonClick(event);
     	});
     	
     	this.debug("tabTitle1 is:\"" + this.strings.GetStringFromName('ThunderKeepPlus.tabTitle1') + 
@@ -72,10 +72,14 @@ TKPManager.prototype.onUnload = function()
 		this.debug("TKPManager onUnLoad successful");
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onUnload: "+ e );}
 }
-TKPManager.prototype.onToolbarButtonClick = function() {
+TKPManager.prototype.onToolbarButtonClick = function(event) {
 
 	// Open a new tab with Google Keep or focus on the already opened one
-	try{		
+	try{
+		// Handle only left click
+		if(event.button !== 0){
+			return;
+		}
 		this.debug("Found " + String(this.tabsArray.length) + " tabs");
 		
 		for (let i = 0; i < this.tabsArray.length; i++) {
