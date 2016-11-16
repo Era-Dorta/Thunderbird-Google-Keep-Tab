@@ -10,12 +10,12 @@ const Cu = Components.utils;
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-Cu.import('resource://gre/modules/Services.jsm');
+Cu.import("resource://gre/modules/Services.jsm");
 
-const extensionLink = 'chrome://ThunderKeepPlus/',
-	contentLink = extensionLink + 'content/',
-	uiModuleLink = contentLink + 'ui.jsm',
-	mainScriptLink = contentLink + 'overlay.js';
+const extensionLink = "chrome://ThunderKeepPlus/",
+	contentLink = extensionLink + "content/",
+	uiModuleLink = contentLink + "ui.jsm",
+	mainScriptLink = contentLink + "overlay.js";
 	
 const PREF_BRANCH = "";
 const PREFS = {};

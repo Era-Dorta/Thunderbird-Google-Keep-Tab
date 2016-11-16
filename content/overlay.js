@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-var EXPORTED_SYMBOLS = ['tkpManager'];
+var EXPORTED_SYMBOLS = ["tkpManager"];
 
 const Cu = Components.utils;
 const Ci = Components.interfaces;
 const Cc = Components.classes;
 
-Cu.import('resource://gre/modules/Services.jsm');
+Cu.import("resource://gre/modules/Services.jsm");
 
 /** Log into console (also shown in terminal that runs firefox **/
 Cu.import("resource://gre/modules/devtools/Console.jsm");
@@ -14,7 +14,7 @@ Cu.import("resource://gre/modules/devtools/Console.jsm");
 var TKPManager = function()
 {
 	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
-	this.strings = Services.strings.createBundle('chrome://ThunderKeepPlus/locale/overlay.properties?' + Math.random());
+	this.strings = Services.strings.createBundle("chrome://ThunderKeepPlus/locale/overlay.properties?" + Math.random());
 	this.mailPane = null;
 	this.tabManager = null;
 	this.tabsArray = null;
@@ -29,7 +29,7 @@ TKPManager.prototype.onLoad = function(document)
         	self.onToolbarButtonClick(event);
     	});
     				
-		this.mailPane = Cc['@mozilla.org/appshell/window-mediator;1'].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+		this.mailPane = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 		this.tabManager = this.mailPane.document.getElementById("tabmail");
 		this.tabsArray = this.tabManager.tabInfo;
 
@@ -42,8 +42,8 @@ TKPManager.prototype.onUnload = function()
 		for (let i = 0; i < this.tabsArray.length; i++) {
 			let tabBrowser = this.tabsArray[i].browser;
 			if(tabBrowser){
-				if(this.tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle1')
-					|| this.tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle2')){
+				if(this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1")
+					|| this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2")){
 					this.tabManager.closeTab(i);
 					return;
 				}
@@ -62,8 +62,8 @@ TKPManager.prototype.onToolbarButtonClick = function(event) {
 		for (let i = 0; i < this.tabsArray.length; i++) {
 			let tabBrowser = this.tabsArray[i].browser;
 			if(tabBrowser){
-				if(this.tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle1')
-					|| this.tabsArray[i].title === this.strings.GetStringFromName('ThunderKeepPlus.tabTitle2')){
+				if(this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1")
+					|| this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2")){
 					this.tabManager.switchToTab(i);
 					return;
 				}
