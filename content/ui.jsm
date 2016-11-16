@@ -6,40 +6,23 @@
 var EXPORTED_SYMBOLS = ['ui'];
 
 const Cu = Components.utils;
+const Ci = Components.interfaces;
+const Cc = Components.classes;
 
 Cu.import('resource://gre/modules/Services.jsm');
 
-/** Log into console (also shown in terminal that runs firefox **/
-Cu.import("resource://gre/modules/devtools/Console.jsm");
-
-/** Xul.js used to define set of functions similar to tags of overlay.xul **/
-Cu.import('chrome://ThunderKeepPlus/content/lib/xul.js');
-
-defineTags(
-    'panel', 'vbox', 'hbox', 'description',
-    'html:input', 'label', 'textbox', 'button',
-    'toobarbutton'
-);
-
-const {
-    PANEL, VBOX, HBOX, DESCRIPTION,
-    HTMLINPUT, LABEL, TEXTBOX, BUTTON,
-    TOOLBARBUTTON
-} = Xul;
-
 /**
- * Add and remove addon user interface - replacement over overlay.xul, which
- * can't be ported into restartless extension
+ * Add and remove addon user interface - replacement over overlay.xul
  */
 function Ui() {
     this.panelNode = null;
     this.buttonNode = null;
 
     /** Css components initialization **/
-    this.sss = Components.classes["@mozilla.org/content/style-sheet-service;1"]
-        .getService(Components.interfaces.nsIStyleSheetService);
-    let ios = Components.classes["@mozilla.org/network/io-service;1"]
-        .getService(Components.interfaces.nsIIOService);
+    this.sss = Cc["@mozilla.org/content/style-sheet-service;1"]
+        .getService(Ci.nsIStyleSheetService);
+    let ios = Cc["@mozilla.org/network/io-service;1"]
+        .getService(Ci.nsIIOService);
     this.cssUri = ios.newURI("chrome://ThunderKeepPlus/skin/overlay.css", null, null);
 
     /** Import localization properties **/
@@ -67,19 +50,17 @@ Ui.prototype = {
         this.overlayNode(this.panelNode);
     },
 
-    overlayNode: function(doc) {
-        let toolbarButtonAttrs = {
-            id: 'thunderkeepplus-toolbar-button',
-            label: this.stringBundle.GetStringFromName('ThunderKeepPlus.label'),
-            tooltiptext: this.stringBundle.GetStringFromName('ThunderKeepPlus.tooltip'),
-            class: 'toolbarbutton-1'
-        };
-        
-        // Insert after AddressBook, we only have insert before, so get the 
-        // next node which is a separator
-        let options = {"insertBefore" : this.document.getElementById("button-address").nextSibling};
-        
-        this.buttonNode = TOOLBARBUTTON(toolbarButtonAttrs).build(doc, options);
+    overlayNode: function(parent) {   
+      
+      // Create the Google Keep button
+      this.buttonNode = this.document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+        "toolbarbutton");
+      this.buttonNode.setAttribute("id",'thunderkeepplus-toolbar-button');
+      this.buttonNode.setAttribute("label", this.stringBundle.GetStringFromName('ThunderKeepPlus.label'));
+      this.buttonNode.setAttribute("class","toolbarbutton-1");
+
+      // Insert after AddressBook button , i.e. insert before the next sibling
+      parent.insertBefore(this.buttonNode, this.document.getElementById("button-address").nextSibling);
     }
 }
 
