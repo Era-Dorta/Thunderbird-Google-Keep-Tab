@@ -18,6 +18,7 @@ var TKPManager = function()
 	this.mailPane = null;
 	this.tabManager = null;
 	this.tabsArray = null;
+	this.loaded = false;
 }
 TKPManager.prototype.onLoad = function(document)
 {
@@ -33,12 +34,16 @@ TKPManager.prototype.onLoad = function(document)
 		this.tabManager = this.mailPane.document.getElementById("tabmail");
 		this.tabsArray = this.tabManager.tabInfo;
 
+		this.loaded = true;
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onLoad: " + e);}
 }
 TKPManager.prototype.onUnload = function()
 {
+	if(!this.loaded){
+		return;
+	}
 	// Close the Google Keep tab
-	try{			
+	try{
 		for (let i = 0; i < this.tabsArray.length; i++) {
 			let tabBrowser = this.tabsArray[i].browser;
 			if(tabBrowser){
@@ -49,6 +54,7 @@ TKPManager.prototype.onUnload = function()
 				}
 			}
 		}
+		this.loaded = false;
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onUnload: "+ e );}
 }
 TKPManager.prototype.onToolbarButtonClick = function(event) {
