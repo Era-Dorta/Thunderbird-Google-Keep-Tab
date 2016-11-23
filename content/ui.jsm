@@ -39,7 +39,9 @@ Ui.prototype = {
     },
 
     destroy: function() {
-        this.panelNode.removeChild(this.buttonNode);
+				if(this.panelNode && this.buttonNode){
+					this.panelNode.removeChild(this.buttonNode);
+        }
         if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET)){
             this.sss.unregisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
         }
