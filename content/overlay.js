@@ -60,6 +60,8 @@ TKPManager.prototype.onUnload = function()
 		return;
 	}
 
+	this.loaded = false;
+
 	// Close the Google Keep tab
 	try{
 		this.debug("Found " + String(this.tabsArray.length) + " tabs");
@@ -76,9 +78,8 @@ TKPManager.prototype.onUnload = function()
 			} else {
 				this.debug("Tab " + i + " without id and title \"" + this.tabsArray[i].title + "\"");
 			}
-		}
-		this.loaded = false;
-		this.debug("TKPManager onUnLoad loaded was true, but didn't find the tab");
+		}		
+		this.debug("TKPManager onUnLoad it didn't find the tab");
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onUnload: "+ e );}
 }
 TKPManager.prototype.onToolbarButtonClick = function(event) {
