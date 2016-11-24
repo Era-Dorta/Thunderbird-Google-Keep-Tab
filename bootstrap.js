@@ -38,7 +38,7 @@ function shutdown(data,reason) {
 	Cu.unload(uiModuleLink);
 
 	// HACK WARNING: The Addon Manager does not properly clear all addon related caches on update;
-	//               in order to fully update images and locales, their caches need clearing here
+	// in order to fully update images and locales, their caches need clearing here
 	Services.obs.notifyObservers(null, "chrome-flush-caches", null);
 }
 function loadThunderKeepPlus() {
@@ -52,11 +52,11 @@ function loadThunderKeepPlus() {
 		
 		// If not ready, set a listener
 		if(domWindow.document.readyState == "complete"){
-        	loadIntoWindow(domWindow);
-        } else {
-        	domWindow.addEventListener("load", loadIntoWindow);
-        }
-    
+			loadIntoWindow(domWindow);
+		} else {
+			domWindow.addEventListener("load", loadIntoWindow);
+		}
+	
 	} else {
 		// If there aren't any windows, set a listener for window opening
 		wm.addListener(WindowListener);
@@ -100,12 +100,12 @@ function loadIntoWindow(window) {
 
 var WindowListener =
 {
-    onOpenWindow: function(xulWindow)
-    {
-        var window = xulWindow.QueryInterface(Ci.nsIInterfaceRequestor)
-                              .getInterface(Ci.nsIDOMWindow);
-        function onWindowLoad()
-        {
+	onOpenWindow: function(xulWindow)
+	{
+		var window = xulWindow.QueryInterface(Ci.nsIInterfaceRequestor)
+								.getInterface(Ci.nsIDOMWindow);
+		function onWindowLoad()
+		{
 			// Only need to be loaded once, so remove all the listeners
 			window.removeEventListener("load",onWindowLoad);
 
@@ -113,9 +113,9 @@ var WindowListener =
 			wm.removeListener(WindowListener);
 
 			loadIntoWindow(window);
-        }
-        window.addEventListener("load",onWindowLoad);
-    },
-    onCloseWindow: function(xulWindow) { },
-    onWindowTitleChange: function(xulWindow, newTitle) { }
+		}
+		window.addEventListener("load",onWindowLoad);
+	},
+	onCloseWindow: function(xulWindow) { },
+	onWindowTitleChange: function(xulWindow, newTitle) { }
 };

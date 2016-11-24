@@ -2,10 +2,10 @@ content ThunderKeepPlus content/
 content ThunderKeepPlus content/ contentaccessible=yes
 
 skin      ThunderKeepPlus   classic/1.0   skin/
-locale    ThunderKeepPlus   en         	  locale/en/
-locale	  ThunderKeepPlus   de	          locale/de/
-locale	  ThunderKeepPlus   es	          locale/es/
-locale	  ThunderKeepPlus   it	          locale/it/
-locale	  ThunderKeepPlus   fr	          locale/fr/
-locale	  ThunderKeepPlus   ru	          locale/ru/
-locale	  ThunderKeepPlus   pt	          locale/pt/
+locale    ThunderKeepPlus   en            locale/en/
+locale    ThunderKeepPlus   de            locale/de/
+locale    ThunderKeepPlus   es            locale/es/
+locale    ThunderKeepPlus   it            locale/it/
+locale    ThunderKeepPlus   fr            locale/fr/
+locale    ThunderKeepPlus   ru            locale/ru/
+locale    ThunderKeepPlus   pt            locale/pt/
