@@ -39,8 +39,8 @@ TKPManager.prototype.onLoad = function(document)
 			self.onToolbarButtonClick(event);
 		});
 		
-		this.debug("tabTitle1 is:\"" + this.strings.GetStringFromName('ThunderKeepPlus.tabTitle1') + 
-			"\" and 2 is:\"" + this.strings.GetStringFromName('ThunderKeepPlus.tabTitle2') + "\"");
+		this.debug("tabTitle1 is:\"" + this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1") + 
+			"\" and 2 is:\"" + this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2") + "\"");
 		
 		this.mailPane = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 		this.tabManager = this.mailPane.document.getElementById("tabmail");
