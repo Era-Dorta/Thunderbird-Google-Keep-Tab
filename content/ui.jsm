@@ -62,13 +62,13 @@ Ui.prototype = {
 		this.buttonNode.setAttribute("label", this.stringBundle.GetStringFromName("ThunderKeepPlus.label"));
 		this.buttonNode.setAttribute("class","toolbarbutton-1");
 
-		let buttonAddress = this.document.getElementById("button-address")
+		let buttonAddress = this.document.getElementById("button-address");
 		if(buttonAddress && buttonAddress.nextSibling){
 			// Insert after AddressBook button , i.e. insert before the next sibling
 			parent.insertBefore(this.buttonNode, buttonAddress.nextSibling);
 		} else {
-			this.buttonNode = null
-			this.prompt.alert(null, "ThunderKeepPlus Error", "overlayNode: missing Address Book button")
+			this.buttonNode = null;
+			this.prompt.alert(null, "ThunderKeepPlus Error", "overlayNode: missing Address Book button");
 		}
 	}
 }
