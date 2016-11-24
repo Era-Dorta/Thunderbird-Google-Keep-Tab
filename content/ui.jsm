@@ -15,6 +15,7 @@ Cu.import("resource://gre/modules/Services.jsm");
  * Add and remove addon user interface - replacement over overlay.xul
  */
 function Ui() {
+	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 	this.panelNode = null;
 	this.buttonNode = null;
 
@@ -52,7 +53,7 @@ Ui.prototype = {
 		this.overlayNode(this.panelNode);
 	},
 
-	overlayNode: function(parent) {   
+	overlayNode: function(parent) {
 	
 		// Create the Google Keep button
 		this.buttonNode = this.document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
@@ -61,8 +62,14 @@ Ui.prototype = {
 		this.buttonNode.setAttribute("label", this.stringBundle.GetStringFromName("ThunderKeepPlus.label"));
 		this.buttonNode.setAttribute("class","toolbarbutton-1");
 
-		// Insert after AddressBook button , i.e. insert before the next sibling
-		parent.insertBefore(this.buttonNode, this.document.getElementById("button-address").nextSibling);
+		let buttonAddress = this.document.getElementById("button-address")
+		if(buttonAddress && buttonAddress.nextSibling){
+			// Insert after AddressBook button , i.e. insert before the next sibling
+			parent.insertBefore(this.buttonNode, buttonAddress.nextSibling);
+		} else {
+			this.buttonNode = null
+			this.prompt.alert(null, "ThunderKeepPlus Error", "overlayNode: missing Address Book button")
+		}
 	}
 }
 
