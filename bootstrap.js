@@ -36,6 +36,7 @@ function shutdown(data,reason) {
 	unloadThunderKeepPlus();
 
 	Cu.unload(uiModuleLink);
+	Cu.unload(mainScriptLink);
 
 	// HACK WARNING: The Addon Manager does not properly clear all addon related caches on update;
 	// in order to fully update images and locales, their caches need clearing here
