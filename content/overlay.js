@@ -30,9 +30,17 @@ TKPManager.prototype.debug= function (aMessage) {
 TKPManager.prototype.onLoad = function(document)
 {
 	try{
+		if(this.loaded){
+			return;
+		}
+		
 		this.debug("TKPManager onLoad");
 		
 		let customButton = document.getElementById("thunderkeepplus-toolbar-button");
+		
+		if(!customButton){
+			return;
+		}
 		
 		var self = this;
 		customButton.addEventListener("click", function(event) {

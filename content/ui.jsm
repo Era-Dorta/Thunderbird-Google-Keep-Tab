@@ -34,7 +34,9 @@ function Ui() {
 Ui.prototype = {
 	attach: function(document) {
 		this.document = document;
-		this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
+		if(!this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET)){
+			this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
+		}
 
 		this.createOverlay();
 	},
@@ -50,7 +52,9 @@ Ui.prototype = {
 
 	createOverlay: function() {
 		this.panelNode = this.document.getElementById("mail-bar3");
-		this.overlayNode(this.panelNode);
+		if(this.panelNode){
+			this.overlayNode(this.panelNode);
+		}
 	},
 
 	overlayNode: function(parent) {
