@@ -15,6 +15,7 @@ Cu.import("resource://gre/modules/Services.jsm");
  * Add and remove addon user interface - replacement over overlay.xul
  */
 function Ui() {
+	this.enableDebug = false;
 	this.buttonNode = null;
 	this.window = null;
 	this.loaded = false;
@@ -38,8 +39,16 @@ function Ui() {
 }
 
 Ui.prototype = {
+	debug: function (aMessage) {
+		if(this.enableDebug) {
+			let consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+			consoleService.logStringMessage("ThunderKeepPlus: " + aMessage);
+		}
+	},
+	
 	attach: function(window) {
 		try{
+			this.debug("Ui attach");
 			if(this.loaded){
 				return;
 			}
@@ -54,6 +63,7 @@ Ui.prototype = {
 
 	destroy: function() {
 		try{
+			this.debug("Ui destroy");
 			if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET)){
 				this.sss.unregisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
 			}
@@ -73,8 +83,10 @@ Ui.prototype = {
 
 	createOverlay: function() {
 		try{
+				this.debug("Ui createOverlay");
 				let toolbox = this.window.document.getElementById("mail-toolbox");
 				if(toolbox != null){
+					this.debug("Ui createOverlay found the toolbox");
 					// Create the Google Keep button
 					this.buttonNode = this.window.document.createElement("toolbarbutton");
 					this.buttonNode.setAttribute("id","thunderkeepplus-toolbar-button");
@@ -85,6 +97,7 @@ Ui.prototype = {
 					// Add it to the toolbox, this allows the user to move with the customize option
 					toolbox.palette.appendChild(this.buttonNode);
 					this.loaded = true;
+					this.debug("Ui createOverlay, button created");
 
 					let parentNodeId = this.prefs_branch.getCharPref("parentNodeId");
 
@@ -100,7 +113,11 @@ Ui.prototype = {
 					if(parentNode != null){
 						let nextNodeId = this.prefs_branch.getCharPref("nextNodeId");
 						let nextNode = this.window.document.getElementById(nextNodeId);
+
 						parentNode.insertItem(this.buttonNode.id, nextNode);
+
+						this.debug("Ui createOverlay, button placed under \"" + parentNodeId
+								+ "\", before \"" + nextNodeId + "\"");
 					} else {
 						let msg = "ThunderKeepPlus could not insert the button in the toolbar" +
 											", please right click on the toolbar select Customize... " +
