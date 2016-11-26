@@ -64,7 +64,7 @@ function uninstall() {
 }
 function loadIntoWindow(window) {
 	if(window.document != null){
-		ui.attach(window.document);
+		ui.attach(window);
 		tkpManager.onLoad(window.document);
 	}
 	return (ui.loaded && tkpManager.loaded);

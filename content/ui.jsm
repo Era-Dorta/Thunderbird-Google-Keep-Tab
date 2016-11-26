@@ -16,7 +16,7 @@ Cu.import("resource://gre/modules/Services.jsm");
  */
 function Ui() {
 	this.buttonNode = null;
-	this.document = null;
+	this.window = null;
 	this.loaded = false;
 
 	/** Css components initialization **/
@@ -38,12 +38,12 @@ function Ui() {
 }
 
 Ui.prototype = {
-	attach: function(document) {
+	attach: function(window) {
 		try{
 			if(this.loaded){
 				return;
 			}
-			this.document = document;
+			this.window = window;
 			if(!this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET)){
 				this.sss.loadAndRegisterSheet(this.cssUri, this.sss.AUTHOR_SHEET);
 			}
@@ -61,22 +61,22 @@ Ui.prototype = {
 				return;
 			}
 			this.loaded = false;
-			this.document.defaultView.removeEventListener("aftercustomization", this.afterCustomizeFnc, false);
+			this.window.removeEventListener("aftercustomization", this.afterCustomizeFnc, false);
 
 			if(this.buttonNode != null && this.buttonNode.parentNode != null){
 				this.buttonNode.parentNode.removeChild(this.buttonNode);
 			}
 			this.buttonNode = null;
-			this.document = null;
+			this.window = null;
 		} catch(e) {Cu.reportError("ThunderKeepPlus: Ui.destroy " + e);}
 	},
 
 	createOverlay: function() {
 		try{
-				let toolbox = this.document.getElementById("mail-toolbox");
+				let toolbox = this.window.document.getElementById("mail-toolbox");
 				if(toolbox != null){
 					// Create the Google Keep button
-					this.buttonNode = this.document.createElement("toolbarbutton");
+					this.buttonNode = this.window.document.createElement("toolbarbutton");
 					this.buttonNode.setAttribute("id","thunderkeepplus-toolbar-button");
 					this.buttonNode.setAttribute("label", this.stringBundle.GetStringFromName("ThunderKeepPlus.label"));
 					this.buttonNode.setAttribute("tooltiptext", this.stringBundle.GetStringFromName("ThunderKeepPlus.tooltip"));
@@ -87,22 +87,22 @@ Ui.prototype = {
 					this.loaded = true;
 
 					let parentNodeId = this.prefs_branch.getCharPref("parentNodeId");
-					let parentNode = this.document.getElementById(parentNodeId);
+					let parentNode = this.window.document.getElementById(parentNodeId);
 
 					// Move to saved toolbar position
 					if(parentNode != null){
 						let nextNodeId = this.prefs_branch.getCharPref("nextNodeId");
-						let nextNode = this.document.getElementById(nextNodeId);
+						let nextNode = this.window.document.getElementById(nextNodeId);
 						parentNode.insertItem(this.buttonNode.id, nextNode);
 					} else {
 						let msg = "ThunderKeepPlus could not insert the button in the toolbar" +
 											", please right click on the toolbar select Customize... " +
 											" and drag and drop the button"
-						this.document.defaultView.setTimeout(function(){
+						this.window.setTimeout(function(){
 								this.prompt.alert(null, "ThunderKeepPlus Warning", msg); }.bind(this),
 								3000);
 					}
-					this.document.defaultView.addEventListener("aftercustomization", this.afterCustomizeFnc, false);
+					this.window.addEventListener("aftercustomization", this.afterCustomizeFnc, false);
 				}
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
 	},
