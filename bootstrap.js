@@ -17,24 +17,27 @@ const extensionLink = "chrome://ThunderKeepPlus/",
 	uiModuleLink = contentLink + "ui.jsm",
 	mainScriptLink = contentLink + "overlay.js";
 	
-const PREF_BRANCH = "";
-const PREFS = {};
+var ui = undefined;
+var tkpManager = undefined;
 
 function startup(data,reason) {
 	Cu.import(uiModuleLink);
 	Cu.import(mainScriptLink);
 
-	//loadDefaultPreferences();
-	loadThunderKeepPlus();
+	ui = new Ui();
+	tkpManager = new TKPManager();
+
+	forEachOpenWindow(loadIntoWindow);
+	maybeAddWindowListener();
 }
 function shutdown(data,reason) {
 	if (reason == APP_SHUTDOWN){
 		return;
 	}
-	
-	//unloadDefaultPreferences();
-	unloadThunderKeepPlus();
 
+	unloadThunderKeepPlus();
+	Services.wm.removeListener(WindowListener);
+	
 	Cu.unload(uiModuleLink);
 	Cu.unload(mainScriptLink);
 
@@ -42,51 +45,9 @@ function shutdown(data,reason) {
 	// in order to fully update images and locales, their caches need clearing here
 	Services.obs.notifyObservers(null, "chrome-flush-caches", null);
 }
-function loadThunderKeepPlus() {
-	let wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-
-	// For thunderbird we only care about the first window
-	let windows = wm.getEnumerator(null);
-	if(windows.hasMoreElements()) {
-		
-		let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
-		
-		// If not ready, set a listener
-		if(domWindow.document.readyState == "complete"){
-			loadIntoWindow(domWindow);
-		} else {
-			domWindow.addEventListener("load", loadIntoWindow);
-		}
-	
-	} else {
-		// If there aren't any windows, set a listener for window opening
-		wm.addListener(WindowListener);
-		return;
-	}
-}
 function unloadThunderKeepPlus() {
 	tkpManager.onUnload();
 	ui.destroy();
-}
-function loadDefaultPreferences() {
-	let branch = Services.prefs.getDefaultBranch(PREF_BRANCH);
-	for (let [key, val] in Iterator(PREFS)) {
-		switch (typeof val) {
-		case "boolean":
-			branch.setBoolPref(key, val);
-			break;
-		case "number":
-			branch.setIntPref(key, val);
-			break;
-		case "string":
-			branch.setCharPref(key, val);
-			break;
-		}
-	}
-}
-function unloadDefaultPreferences() {
-	let branch = Services.prefs.getDefaultBranch(PREF_BRANCH);
-	branch.deleteBranch("");
 }
 function install(data) {
 	/** Present here only to avoid warning on addon installation **/
@@ -95,10 +56,31 @@ function uninstall() {
 	/** Present here only to avoid warning on addon removal **/
 }
 function loadIntoWindow(window) {
-	ui.attach(window.document);
-	tkpManager.onLoad(window.document);
+	if(window.document != null){
+		ui.attach(window.document);
+		tkpManager.onLoad(window.document);
+	}
+	return (ui.loaded && tkpManager.loaded);
 }
-
+function forEachOpenWindow(fnc)  // Apply a function to all open browser windows
+{
+	var windows = Services.wm.getEnumerator(null);
+	while (windows.hasMoreElements()){
+		if(fnc(windows.getNext().QueryInterface(Ci.nsIDOMWindow))){
+			return;
+		}
+	}
+}
+function maybeAddWindowListener(){
+	if(!(ui.loaded && tkpManager.loaded)){
+		Services.wm.addListener(WindowListener);
+	}
+}
+function maybeRemoveWindowListener(){
+	if(ui.loaded && tkpManager.loaded){
+		Services.wm.removeListener(WindowListener);
+	}
+}
 var WindowListener =
 {
 	onOpenWindow: function(xulWindow)
@@ -107,15 +89,12 @@ var WindowListener =
 								.getInterface(Ci.nsIDOMWindow);
 		function onWindowLoad()
 		{
-			// Only need to be loaded once, so remove all the listeners
-			window.removeEventListener("load",onWindowLoad);
-
-			let wm = Cc["@mozilla.org/appshell/window-mediator;1"].getService(Ci.nsIWindowMediator);
-			wm.removeListener(WindowListener);
-
+			window.removeEventListener("load", onWindowLoadFnc);
 			loadIntoWindow(window);
+			maybeRemoveWindowListener();
 		}
-		window.addEventListener("load",onWindowLoad);
+		var onWindowLoadFnc = onWindowLoad.bind(this);
+		window.addEventListener("load", onWindowLoadFnc);
 	},
 	onCloseWindow: function(xulWindow) { },
 	onWindowTitleChange: function(xulWindow, newTitle) { }

@@ -1,6 +1,6 @@
 "use strict";
 
-var EXPORTED_SYMBOLS = ["tkpManager"];
+var EXPORTED_SYMBOLS = ["TKPManager"];
 
 const Cu = Components.utils;
 const Ci = Components.interfaces;
@@ -11,7 +11,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 /** Log into console (also shown in terminal that runs firefox **/
 Cu.import("resource://gre/modules/devtools/Console.jsm");
 
-var TKPManager = function()
+function TKPManager()
 {
 	this.enableDebug = false;
 	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
@@ -38,7 +38,7 @@ TKPManager.prototype.onLoad = function(document)
 		
 		let customButton = document.getElementById("thunderkeepplus-toolbar-button");
 		
-		if(!customButton){
+		if(customButton == null){
 			return;
 		}
 		
@@ -75,7 +75,7 @@ TKPManager.prototype.onUnload = function()
 		this.debug("Found " + String(this.tabsArray.length) + " tabs");
 		for (let i = 0; i < this.tabsArray.length; i++) {
 			let tabBrowser = this.tabsArray[i].browser;
-			if(tabBrowser){
+			if(tabBrowser != null){
 				this.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + this.tabsArray[i].title + "\"");
 				if(this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1")
 					|| this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2")){
@@ -102,7 +102,7 @@ TKPManager.prototype.onToolbarButtonClick = function(event) {
 		
 		for (let i = 0; i < this.tabsArray.length; i++) {
 			let tabBrowser = this.tabsArray[i].browser;
-			if(tabBrowser){
+			if(tabBrowser != null){
 				this.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + this.tabsArray[i].title + "\"");
 				if(this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1")
 					|| this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2")){
@@ -123,5 +123,3 @@ TKPManager.prototype.onToolbarButtonClick = function(event) {
 		
 	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onToolbarButtonClick: "+ e );}
 }
-
-var tkpManager = new TKPManager();
