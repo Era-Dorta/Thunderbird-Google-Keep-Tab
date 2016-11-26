@@ -18,6 +18,7 @@ const extensionLink = "chrome://ThunderKeepPlus/",
 	mainScriptLink = contentLink + "overlay.js";
 
 const PREF_BRANCH = "extensions.thunderkeepplus.";
+// Default button position
 const PREFS = {parentNodeId: "mail-bar3", nextNodeId: "button-tag"};
 
 var ui = undefined;

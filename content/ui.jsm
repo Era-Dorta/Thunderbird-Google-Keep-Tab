@@ -87,6 +87,13 @@ Ui.prototype = {
 					this.loaded = true;
 
 					let parentNodeId = this.prefs_branch.getCharPref("parentNodeId");
+
+					// If the saved position is the toolbox exit early
+					if(parentNodeId === "MailToolbarPalette"){
+						this.window.addEventListener("aftercustomization", this.afterCustomizeFnc, false);
+						return;
+					}
+
 					let parentNode = this.window.document.getElementById(parentNodeId);
 
 					// Move to saved toolbar position
