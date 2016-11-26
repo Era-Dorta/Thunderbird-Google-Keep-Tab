@@ -15,7 +15,6 @@ Cu.import("resource://gre/modules/Services.jsm");
  * Add and remove addon user interface - replacement over overlay.xul
  */
 function Ui() {
-	this.panelNode = null;
 	this.buttonNode = null;
 	this.document = null;
 	this.loaded = false;
@@ -52,36 +51,34 @@ Ui.prototype = {
 			return;
 		}
 		this.loaded = false;
-		if(this.panelNode != null && this.buttonNode != null){
-			this.panelNode.removeChild(this.buttonNode);
+		if(this.buttonNode != null && this.buttonNode.parentNode != null){
+			this.buttonNode.parentNode.removeChild(this.buttonNode);
 			this.buttonNode = null;
-			this.panelNode = null;
 			this.document = null;
 		}
 	},
 
 	createOverlay: function() {
-		this.panelNode = this.document.getElementById("mail-bar3");
-		if(this.panelNode != null){
-			this.overlayNode(this.panelNode);
-		}
-	},
-
-	overlayNode: function(parent) {
-	
-		let buttonAddress = this.document.getElementById("button-address");
-		if(buttonAddress != null && buttonAddress.nextSibling != null){
+		let toolbox = this.document.getElementById("mail-toolbox");
+		if(toolbox != null){
 			// Create the Google Keep button
-			this.buttonNode = this.document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
-				"toolbarbutton");
+			this.buttonNode = this.document.createElement("toolbarbutton");
 			this.buttonNode.setAttribute("id","thunderkeepplus-toolbar-button");
 			this.buttonNode.setAttribute("label", this.stringBundle.GetStringFromName("ThunderKeepPlus.label"));
 			this.buttonNode.setAttribute("tooltiptext", this.stringBundle.GetStringFromName("ThunderKeepPlus.tooltip"));
-			this.buttonNode.setAttribute("class","toolbarbutton-1");
-			
-			// Insert after AddressBook button , i.e. insert before the next sibling
-			parent.insertBefore(this.buttonNode, buttonAddress.nextSibling);
+			this.buttonNode.setAttribute("class","toolbarbutton-1 chromeclass-toolbar-additional");
+
+			// Add it to the toolbox, this allows the user to move with the customize option
+			toolbox.palette.appendChild(this.buttonNode);
 			this.loaded = true;
+			
+			let buttonAddress = this.document.getElementById("button-address");
+			
+			// Move it after the AddressBook button , i.e. insert before the next sibling			
+			if(buttonAddress != null && buttonAddress.parentNode != null && buttonAddress.nextSibling != null){
+				//TODO Add callback to save user changes
+				buttonAddress.parentNode.insertItem(this.buttonNode.id, buttonAddress.nextSibling);
+			}
 		}
 	}
 }
