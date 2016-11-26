@@ -16,13 +16,18 @@ const extensionLink = "chrome://ThunderKeepPlus/",
 	contentLink = extensionLink + "content/",
 	uiModuleLink = contentLink + "ui.jsm",
 	mainScriptLink = contentLink + "overlay.js";
-	
+
+const PREF_BRANCH = "extensions.thunderkeepplus.";
+const PREFS = {parentNodeId: "mail-bar3", nextNodeId: "button-tag"};
+
 var ui = undefined;
 var tkpManager = undefined;
 
 function startup(data,reason) {
 	Cu.import(uiModuleLink);
 	Cu.import(mainScriptLink);
+
+	loadDefaultPreferences();
 
 	ui = new Ui();
 	tkpManager = new TKPManager();
@@ -34,6 +39,8 @@ function shutdown(data,reason) {
 	if (reason == APP_SHUTDOWN){
 		return;
 	}
+
+	unloadDefaultPreferences();
 
 	unloadThunderKeepPlus();
 	Services.wm.removeListener(WindowListener);
@@ -80,6 +87,26 @@ function maybeRemoveWindowListener(){
 	if(ui.loaded && tkpManager.loaded){
 		Services.wm.removeListener(WindowListener);
 	}
+}
+function loadDefaultPreferences() {
+	let branch = Services.prefs.getDefaultBranch(PREF_BRANCH);
+	for (let [key, val] in Iterator(PREFS)) {
+		switch (typeof val) {
+		case "boolean":
+			branch.setBoolPref(key, val);
+			break;
+		case "number":
+			branch.setIntPref(key, val);
+			break;
+		case "string":
+			branch.setCharPref(key, val);
+			break;
+		}
+	}
+}
+function unloadDefaultPreferences() {
+	let branch = Services.prefs.getDefaultBranch(PREF_BRANCH);
+	branch.deleteBranch("");
 }
 var WindowListener =
 {
