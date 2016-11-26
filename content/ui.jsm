@@ -76,6 +76,7 @@ Ui.prototype = {
 				"toolbarbutton");
 			this.buttonNode.setAttribute("id","thunderkeepplus-toolbar-button");
 			this.buttonNode.setAttribute("label", this.stringBundle.GetStringFromName("ThunderKeepPlus.label"));
+			this.buttonNode.setAttribute("tooltiptext", this.stringBundle.GetStringFromName("ThunderKeepPlus.tooltip"));
 			this.buttonNode.setAttribute("class","toolbarbutton-1");
 			
 			// Insert after AddressBook button , i.e. insert before the next sibling
