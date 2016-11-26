@@ -14,8 +14,8 @@ Cu.import("resource://gre/modules/Services.jsm");
 /**
  * Add and remove addon user interface - replacement over overlay.xul
  */
-function Ui() {
-	this.enableDebug = false;
+function Ui(enableDebug) {
+	this.enableDebug = enableDebug;
 	this.buttonNode = null;
 	this.window = null;
 	this.loaded = false;

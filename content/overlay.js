@@ -11,9 +11,9 @@ Cu.import("resource://gre/modules/Services.jsm");
 /** Log into console (also shown in terminal that runs firefox **/
 Cu.import("resource://gre/modules/devtools/Console.jsm");
 
-function TKPManager()
+function TKPManager(enableDebug)
 {
-	this.enableDebug = false;
+	this.enableDebug = enableDebug;
 	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 	this.strings = Services.strings.createBundle("chrome://ThunderKeepPlus/locale/overlay.properties?" + Math.random());
 	this.mailPane = null;

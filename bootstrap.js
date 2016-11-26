@@ -24,14 +24,16 @@ const PREFS = {parentNodeId: "mail-bar3", nextNodeId: "button-tag"};
 var ui = undefined;
 var tkpManager = undefined;
 
+var enableDebug = false;
+
 function startup(data,reason) {
 	Cu.import(uiModuleLink);
 	Cu.import(mainScriptLink);
 
 	loadDefaultPreferences();
 
-	ui = new Ui();
-	tkpManager = new TKPManager();
+	ui = new Ui(enableDebug);
+	tkpManager = new TKPManager(enableDebug);
 
 	forEachOpenWindow(loadIntoWindow);
 	maybeAddWindowListener();
