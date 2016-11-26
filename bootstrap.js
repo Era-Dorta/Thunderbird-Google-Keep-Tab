@@ -1,11 +1,3 @@
-/**
- * Bootstrap.js template is taken from next link
- * https://developer.mozilla.org/en-US/Add-ons/Bootstrapped_extensions
- * but different in way that there is no loadIntoWindow function because
- * CustomizeUI has own events that are fired on ui modification (after new
- * xulWindow openned)
- */
-
 const Cu = Components.utils;
 const Cc = Components.classes;
 const Ci = Components.interfaces;
