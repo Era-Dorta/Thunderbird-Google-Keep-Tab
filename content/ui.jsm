@@ -25,12 +25,16 @@ function Ui() {
 	let ios = Cc["@mozilla.org/network/io-service;1"]
 		.getService(Ci.nsIIOService);
 	this.cssUri = ios.newURI("chrome://ThunderKeepPlus/skin/overlay.css", null, null);
-	
+
 	/** User alerts **/
 	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 
 	/** Import localization properties **/
 	this.stringBundle = Services.strings.createBundle("chrome://ThunderKeepPlus/locale/overlay.properties?" + Math.random()); // Randomize URI to work around bug 719376
+
+	this.prefs_branch = Services.prefs.getBranch("extensions.thunderkeepplus.");
+
+	this.afterCustomizeFnc = this.afterCustomize.bind(this);
 }
 
 Ui.prototype = {
@@ -57,6 +61,8 @@ Ui.prototype = {
 				return;
 			}
 			this.loaded = false;
+			this.document.defaultView.removeEventListener("aftercustomization", this.afterCustomizeFnc, false);
+
 			if(this.buttonNode != null && this.buttonNode.parentNode != null){
 				this.buttonNode.parentNode.removeChild(this.buttonNode);
 			}
@@ -79,13 +85,15 @@ Ui.prototype = {
 					// Add it to the toolbox, this allows the user to move with the customize option
 					toolbox.palette.appendChild(this.buttonNode);
 					this.loaded = true;
-			
-					let buttonAddress = this.document.getElementById("button-address");
-			
-					// Move it after the AddressBook button , i.e. insert before the next sibling			
-					if(buttonAddress != null && buttonAddress.parentNode != null && buttonAddress.nextSibling != null){
-						//TODO Add callback to save user changes
-						buttonAddress.parentNode.insertItem(this.buttonNode.id, buttonAddress.nextSibling);
+
+					let parentNodeId = this.prefs_branch.getCharPref("parentNodeId");
+					let parentNode = this.document.getElementById(parentNodeId);
+
+					// Move to saved toolbar position
+					if(parentNode != null){
+						let nextNodeId = this.prefs_branch.getCharPref("nextNodeId");
+						let nextNode = this.document.getElementById(nextNodeId);
+						parentNode.insertItem(this.buttonNode.id, nextNode);
 					} else {
 						let msg = "ThunderKeepPlus could not insert the button in the toolbar" +
 											", please right click on the toolbar select Customize... " +
@@ -94,8 +102,23 @@ Ui.prototype = {
 								this.prompt.alert(null, "ThunderKeepPlus Warning", msg); }.bind(this),
 								3000);
 					}
+					this.document.defaultView.addEventListener("aftercustomization", this.afterCustomizeFnc, false);
 				}
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
+	},
+
+	afterCustomize: function (e) {
+		// Save in the preferences the new nextSibling and parentNode
+		if (this.buttonNode != null){
+			if(this.buttonNode.parentNode != null){
+				this.prefs_branch.setCharPref("parentNodeId", this.buttonNode.parentNode.id);
+				if(this.buttonNode.nextSibling != null){
+					this.prefs_branch.setCharPref("nextNodeId", this.buttonNode.nextSibling.id);
+				} else{
+					this.prefs_branch.setCharPref("nextNodeId", "");
+				 }
+			}
+		}
 	}
 }
 
