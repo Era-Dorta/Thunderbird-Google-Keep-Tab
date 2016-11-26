@@ -25,6 +25,9 @@ function Ui() {
 	let ios = Cc["@mozilla.org/network/io-service;1"]
 		.getService(Ci.nsIIOService);
 	this.cssUri = ios.newURI("chrome://ThunderKeepPlus/skin/overlay.css", null, null);
+	
+	/** User alerts **/
+	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 
 	/** Import localization properties **/
 	this.stringBundle = Services.strings.createBundle("chrome://ThunderKeepPlus/locale/overlay.properties?" + Math.random()); // Randomize URI to work around bug 719376
@@ -84,6 +87,12 @@ Ui.prototype = {
 						//TODO Add callback to save user changes
 						buttonAddress.parentNode.insertItem(this.buttonNode.id, buttonAddress.nextSibling);
 					} else {
+						let msg = "ThunderKeepPlus could not insert the button in the toolbar" +
+											", please right click on the toolbar select Customize... " +
+											" and drag and drop the button"
+						this.document.defaultView.setTimeout(function(){
+								this.prompt.alert(null, "ThunderKeepPlus Warning", msg); }.bind(this),
+								3000);
 					}
 				}
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
