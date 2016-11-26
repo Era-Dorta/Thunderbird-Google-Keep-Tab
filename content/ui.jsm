@@ -111,8 +111,12 @@ Ui.prototype = {
 
 					// Move to saved toolbar position
 					if(parentNode != null){
+
+						let nextNode = null;
 						let nextNodeId = this.prefs_branch.getCharPref("nextNodeId");
-						let nextNode = this.window.document.getElementById(nextNodeId);
+						if(nextNodeId !== ""){
+							nextNode = this.window.document.getElementById(nextNodeId);
+						}
 
 						parentNode.insertItem(this.buttonNode.id, nextNode);
 
