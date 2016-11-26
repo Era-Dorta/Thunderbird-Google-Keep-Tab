@@ -80,7 +80,7 @@ Ui.prototype = {
 					toolbox.palette.appendChild(this.buttonNode);
 					this.loaded = true;
 			
-					let buttonAddress = null;//this.document.getElementById("button-address");
+					let buttonAddress = this.document.getElementById("button-address");
 			
 					// Move it after the AddressBook button , i.e. insert before the next sibling			
 					if(buttonAddress != null && buttonAddress.parentNode != null && buttonAddress.nextSibling != null){
