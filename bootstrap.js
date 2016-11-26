@@ -27,6 +27,8 @@ var tkpManager = undefined;
 var enableDebug = false;
 
 function startup(data,reason) {
+	debug("startup");
+
 	Cu.import(uiModuleLink);
 	Cu.import(mainScriptLink);
 
@@ -39,9 +41,12 @@ function startup(data,reason) {
 	maybeAddWindowListener();
 }
 function shutdown(data,reason) {
+	debug("shutdown");
+	
 	if (reason == APP_SHUTDOWN){
 		return;
 	}
+	debug("shutdown not APP_SHUTDOWN");
 
 	unloadDefaultPreferences();
 
@@ -56,6 +61,8 @@ function shutdown(data,reason) {
 	Services.obs.notifyObservers(null, "chrome-flush-caches", null);
 }
 function unloadThunderKeepPlus() {
+	debug("unloadThunderKeepPlus");
+
 	tkpManager.onUnload();
 	ui.destroy();
 }
@@ -66,7 +73,10 @@ function uninstall() {
 	/** Present here only to avoid warning on addon removal **/
 }
 function loadIntoWindow(window) {
+	debug("loadIntoWindow");
+
 	if(window.document != null){
+		debug("loadIntoWindow dom title: " + window.document.title);
 		ui.attach(window);
 		tkpManager.onLoad(window.document);
 	}
@@ -74,6 +84,8 @@ function loadIntoWindow(window) {
 }
 function forEachOpenWindow(fnc)  // Apply a function to all open browser windows
 {
+	debug("forEachOpenWindow");
+
 	var windows = Services.wm.getEnumerator(null);
 	while (windows.hasMoreElements()){
 		if(fnc(windows.getNext().QueryInterface(Ci.nsIDOMWindow))){
@@ -82,16 +94,24 @@ function forEachOpenWindow(fnc)  // Apply a function to all open browser windows
 	}
 }
 function maybeAddWindowListener(){
+	debug("maybeAddWindowListener");
+
 	if(!(ui.loaded && tkpManager.loaded)){
+		debug("maybeAddWindowListener adding listener");
 		Services.wm.addListener(WindowListener);
 	}
 }
 function maybeRemoveWindowListener(){
+	debug("maybeRemoveWindowListener");
+
 	if(ui.loaded && tkpManager.loaded){
+		debug("maybeRemoveWindowListener removing listener");
 		Services.wm.removeListener(WindowListener);
 	}
 }
 function loadDefaultPreferences() {
+	debug("loadDefaultPreferences");
+
 	let branch = Services.prefs.getDefaultBranch(PREF_BRANCH);
 	for (let [key, val] in Iterator(PREFS)) {
 		switch (typeof val) {
@@ -108,18 +128,29 @@ function loadDefaultPreferences() {
 	}
 }
 function unloadDefaultPreferences() {
+	debug("unloadDefaultPreferences");
+
 	let branch = Services.prefs.getDefaultBranch(PREF_BRANCH);
 	branch.deleteBranch("");
+}
+function debug(aMessage) {
+	if(enableDebug) {
+		let consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+		consoleService.logStringMessage("ThunderKeepPlus: " + aMessage);
+	}
 }
 var WindowListener =
 {
 	onOpenWindow: function(xulWindow)
 	{
+		debug("WindowListener: onOpenWindow");
+		
 		var window = xulWindow.QueryInterface(Ci.nsIInterfaceRequestor)
 								.getInterface(Ci.nsIDOMWindow);
 		function onWindowLoad()
 		{
 			window.removeEventListener("load", onWindowLoadFnc);
+			debug("WindowListener: onWindowLoad");
 			loadIntoWindow(window);
 			maybeRemoveWindowListener();
 		}
