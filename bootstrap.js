@@ -28,6 +28,12 @@ var enableDebug = false;
 
 function startup(data,reason) {
 	debug("startup");
+	
+	if(reason == ADDON_UPGRADE){
+		// Version 0.9 never unloads the scripts, do it here to fix upgrade issues
+		Cu.unload(uiModuleLink);
+		Cu.unload(mainScriptLink);
+	}
 
 	Cu.import(uiModuleLink);
 	Cu.import(mainScriptLink);
