@@ -57,7 +57,7 @@ TKPManager.prototype.onLoad = function(document)
 		this.loaded = true;
 
 		this.debug("TKPManager onLoad successful");
-	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onLoad: " + e);}
+	} catch(e) {Cu.reportError("ThunderKeepPlus: onLoad " + e);}
 }
 TKPManager.prototype.onUnload = function()
 {
@@ -88,7 +88,7 @@ TKPManager.prototype.onUnload = function()
 			}
 		}		
 		this.debug("TKPManager onUnLoad it didn't find the tab");
-	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onUnload: "+ e );}
+	} catch(e) { Cu.reportError("ThunderKeepPlus: onUnload " + e);}
 }
 TKPManager.prototype.onToolbarButtonClick = function(event) {
 
@@ -121,5 +121,5 @@ TKPManager.prototype.onToolbarButtonClick = function(event) {
 		
 		this.debug("Tab opened successfully");
 		
-	} catch(e) { this.prompt.alert(null, "ThunderKeepPlus Error", "onToolbarButtonClick: "+ e );}
+	} catch(e) {Cu.reportError("ThunderKeepPlus: onToolbarButtonClick " + e);}
 }
