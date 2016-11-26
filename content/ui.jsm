@@ -132,17 +132,22 @@ Ui.prototype = {
 	},
 
 	afterCustomize: function (e) {
-		// Save in the preferences the new nextSibling and parentNode
-		if (this.buttonNode != null){
-			if(this.buttonNode.parentNode != null){
+		try{
+			this.debug("Ui afterCustomize");
+			// Save in the preferences the parentNode and the nextSibling
+			if (this.buttonNode != null && this.buttonNode.parentNode != null){
 				this.prefs_branch.setCharPref("parentNodeId", this.buttonNode.parentNode.id);
+
 				if(this.buttonNode.nextSibling != null){
 					this.prefs_branch.setCharPref("nextNodeId", this.buttonNode.nextSibling.id);
 				} else{
 					this.prefs_branch.setCharPref("nextNodeId", "");
-				 }
+				}
 			}
-		}
+			this.debug("Ui afterCustomize new prefs parentNodeId: \"" + 
+					this.prefs_branch.getCharPref("parentNodeId") +"\", nextNodeId: \"" +
+					this.prefs_branch.getCharPref("nextNodeId") + "\"");
+		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
 	}
 }
 
