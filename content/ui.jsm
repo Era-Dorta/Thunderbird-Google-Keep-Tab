@@ -14,6 +14,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 function Ui(enableDebug) {
 	this.enableDebug = enableDebug;
 	this.buttonNode = null;
+	this.menuNode = null;
 	this.window = null;
 	this.loaded = false;
 
@@ -33,6 +34,7 @@ function Ui(enableDebug) {
 	this.prefs_branch = Services.prefs.getBranch("extensions.thunderkeepplus.");
 
 	this.afterCustomizeFnc = this.afterCustomize.bind(this);
+	this.onSignOutFnc = this.onSignOut.bind(this);
 }
 
 Ui.prototype = {
@@ -72,6 +74,9 @@ Ui.prototype = {
 
 			if(this.buttonNode != null && this.buttonNode.parentNode != null){
 				this.buttonNode.parentNode.removeChild(this.buttonNode);
+			}
+			if(this.menuNode != null && this.menuNode.parentNode != null){
+				this.menuNode.parentNode.removeChild(this.menuNode);
 			}
 			this.buttonNode = null;
 			this.window = null;
@@ -128,10 +133,28 @@ Ui.prototype = {
 								3000);
 					}
 					this.window.addEventListener("aftercustomization", this.afterCustomizeFnc, false);
+					
+					
+					// Create the sign out menu item in Tools
+					parentNode = this.window.document.getElementById("taskPopup");
+					this.menuNode = this.window.document.createElement("menuitem");
+					this.menuNode.setAttribute("id", "thunderkeepplus-menu");
+					this.menuNode.setAttribute("label", "Google Keep Sign Out");
+					
+					// Insert before the JavaScript console menu item
+					let nextNode = this.window.document.getElementById("javascriptConsole");
+	
+					if (nextNode != null){
+						parentNode.insertBefore(this.menuNode, nextNode);
+					} else {
+						parentNode.appendChild(this.menuNode);
+					}
+					
+					this.menuNode.addEventListener("command", this.onSignOutFnc, false);
 				}
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
 	},
-
+	
 	afterCustomize: function (e) {
 		try{
 			this.debug("Ui afterCustomize");
@@ -149,6 +172,31 @@ Ui.prototype = {
 					this.prefs_branch.getCharPref("parentNodeId") +"\", nextNodeId: \"" +
 					this.prefs_branch.getCharPref("nextNodeId") + "\"");
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
+	},
+	
+	onSignOut: function(event) {
+		// Log out the user by removing the google.com cookies
+		try{
+
+			let cookieOrigin = "google.com"; // Cookies from here will be removed
+			let cookieManager = Services.cookies;
+		
+			let numCookies = cookieManager.countCookiesFromHost(cookieOrigin);
+			this.debug("Found " + numCookies + " cookies from " + cookieOrigin);
+		
+			if (numCookies > 0) {
+				let cookies = cookieManager.getCookiesFromHost(cookieOrigin);
+				let cookie = null;
+				while (cookies.hasMoreElements()){
+					cookie = cookies.getNext().QueryInterface(Ci.nsICookie2);
+					this.debug("\tRemoving cookie [" + cookie.host + "], [" +  cookie.name + "], [" + cookie.path + "]");
+					cookieManager.remove(cookie.host, cookie.name, cookie.path, false, cookieOrigin);
+				}
+			}
+		
+			this.debug("Done removing cookies");
+
+		} catch(event) {Cu.reportError("ThunderKeepPlus: onSignOut " + event);}
 	}
 }
 
