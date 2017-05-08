@@ -123,3 +123,29 @@ TKPManager.prototype.onToolbarButtonClick = function(event) {
 		
 	} catch(e) {Cu.reportError("ThunderKeepPlus: onToolbarButtonClick " + e);}
 }
+TKPManager.prototype.onLogOut = function(event) {
+
+	// Log out the user by removing the google.com cookies
+	try{
+
+		let cookieOrigin = "google.com"; // Cookies from here will be removed
+		let cookieManager = Services.cookies;
+		
+		let numCookies = cookieManager.countCookiesFromHost(cookieOrigin);
+		this.debug("Found " + numCookies + " cookies from " + cookieOrigin);
+		
+		if (numCookies > 0) {
+			let cookies = cookieManager.getCookiesFromHost(cookieOrigin);
+			let cookie = null;
+			while (cookies.hasMoreElements()){
+				cookie = cookies.getNext().QueryInterface(Ci.nsICookie2);
+				this.debug("\tRemoving cookie [" + cookie.host + "], [" +  cookie.name + "], [" + cookie.path + "]");
+				cookieManager.remove(cookie.host, cookie.name, cookie.path, false, cookieOrigin);
+			}
+		}
+		
+		this.debug("Done removing cookies");
+
+	} catch(e) {Cu.reportError("ThunderKeepPlus: onToolbarButtonClick " + e);}
+}
+
