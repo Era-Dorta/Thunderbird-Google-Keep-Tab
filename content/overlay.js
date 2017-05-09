@@ -136,12 +136,12 @@ TKPManager.prototype.onSignOut = function(event) {
 		this.debug("\tFound " + numCookies + " cookies from " + cookieOrigin);
 	
 		if (numCookies > 0) {
-			let cookies = cookieManager.getCookiesFromHost(cookieOrigin);
+			let cookies = cookieManager.getCookiesFromHost(cookieOrigin, {});
 			let cookie = null;
 			while (cookies.hasMoreElements()){
 				cookie = cookies.getNext().QueryInterface(Ci.nsICookie2);
 				this.debug("\tRemoving cookie [" + cookie.host + "], [" +  cookie.name + "], [" + cookie.path + "]");
-				cookieManager.remove(cookie.host, cookie.name, cookie.path, false, cookieOrigin);
+				cookieManager.remove(cookie.host, cookie.name, cookie.path, false, cookie.originAttributes);
 			}
 		}
 	
