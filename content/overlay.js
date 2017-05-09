@@ -36,6 +36,7 @@ TKPManager.prototype.onLoad = function(document)
 		
 		this.debug("TKPManager onLoad");
 		
+		// Main button
 		let customButton = document.getElementById("thunderkeepplus-toolbar-button");
 		
 		if(customButton == null){
@@ -46,6 +47,24 @@ TKPManager.prototype.onLoad = function(document)
 		customButton.addEventListener("click", function(event) {
 			self.onToolbarButtonClick(event);
 		});
+		
+		// Sign out in main menu item
+		customButton = document.getElementById("thunderkeepplus_signout");
+		
+		if(customButton != null){
+			customButton.addEventListener("command", function(event) {
+				self.onSignOut(event);
+			}, false);
+		}
+		
+		// Sign out in app menu item
+		customButton = document.getElementById("appmenu_thunderkeepplus_signout");
+		
+		if(customButton != null){
+			customButton.addEventListener("command", function(event) {
+				self.onSignOut(event);
+			}, false);
+		}
 		
 		this.debug("tabTitle1 is:\"" + this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1") + 
 			"\" and 2 is:\"" + this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2") + "\"");
@@ -70,25 +89,7 @@ TKPManager.prototype.onUnload = function()
 
 	this.loaded = false;
 
-	// Close the Google Keep tab
-	try{
-		this.debug("Found " + String(this.tabsArray.length) + " tabs");
-		for (let i = 0; i < this.tabsArray.length; i++) {
-			let tabBrowser = this.tabsArray[i].browser;
-			if(tabBrowser != null){
-				this.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + this.tabsArray[i].title + "\"");
-				if(this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1")
-					|| this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2")){
-					this.debug("Closing tab " + i);
-					this.tabManager.closeTab(i);
-					return;
-				}
-			} else {
-				this.debug("Tab " + i + " without id and title \"" + this.tabsArray[i].title + "\"");
-			}
-		}		
-		this.debug("TKPManager onUnLoad it didn't find the tab");
-	} catch(e) { Cu.reportError("ThunderKeepPlus: onUnload " + e);}
+	this.closeGoogleKeepTab();
 }
 TKPManager.prototype.onToolbarButtonClick = function(event) {
 
@@ -98,29 +99,77 @@ TKPManager.prototype.onToolbarButtonClick = function(event) {
 		if(event.button !== 0){
 			return;
 		}
-		this.debug("Found " + String(this.tabsArray.length) + " tabs");
+		this.debug("TKPManager trying to open a Google Keep Tab ");
+		this.debug("\tFound " + String(this.tabsArray.length) + " tabs");
 		
 		for (let i = 0; i < this.tabsArray.length; i++) {
 			let tabBrowser = this.tabsArray[i].browser;
 			if(tabBrowser != null){
-				this.debug("Tab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + this.tabsArray[i].title + "\"");
+				this.debug("\tTab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + this.tabsArray[i].title + "\"");
 				if(this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1")
 					|| this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2")){
-					this.debug("Switching to tab " + i);
+					this.debug("\tSwitching to tab " + i);
 					this.tabManager.switchToTab(i);
 					return;
 				}
 			} else {
-				this.debug("Tab " + i + " without id and title \"" + this.tabsArray[i].title + "\"");
+				this.debug("\tTab " + i + " without id and title \"" + this.tabsArray[i].title + "\"");
 			}
 		}
 		
-		this.debug("Tab no found, opening new one");
+		this.debug("\tTab not found, opening new one");
 		
 		let gtab = this.tabManager.openTab("contentTab", {contentPage: "http://keep.google.com"});
 		
-		this.debug("Tab opened successfully");
+		this.debug("\tTab opened successfully");
 		
 	} catch(e) {Cu.reportError("ThunderKeepPlus: onToolbarButtonClick " + e);}
 }
+TKPManager.prototype.onSignOut = function(event) {
+	// Log out the user by removing the google.com cookies
+	try{
+		this.debug("TKPManager trying to sign out");
+		let cookieOrigin = "google.com"; // Cookies from this address will be removed
+		let cookieManager = Services.cookies;
+	
+		let numCookies = cookieManager.countCookiesFromHost(cookieOrigin);
+		this.debug("\tFound " + numCookies + " cookies from " + cookieOrigin);
+	
+		if (numCookies > 0) {
+			let cookies = cookieManager.getCookiesFromHost(cookieOrigin);
+			let cookie = null;
+			while (cookies.hasMoreElements()){
+				cookie = cookies.getNext().QueryInterface(Ci.nsICookie2);
+				this.debug("\tRemoving cookie [" + cookie.host + "], [" +  cookie.name + "], [" + cookie.path + "]");
+				cookieManager.remove(cookie.host, cookie.name, cookie.path, false, cookieOrigin);
+			}
+		}
+	
+		this.debug("\tDone removing cookies");
+		
+		this.closeGoogleKeepTab();
 
+	} catch(event) {Cu.reportError("ThunderKeepPlus: onSignOut " + event);}
+}
+TKPManager.prototype.closeGoogleKeepTab = function() {
+	// Close the Google Keep tab
+	try{
+		this.debug("TKPManager trying to close the Google Keep Tab ");
+		this.debug("\tFound " + String(this.tabsArray.length) + " tabs");
+		for (let i = 0; i < this.tabsArray.length; i++) {
+			let tabBrowser = this.tabsArray[i].browser;
+			if(tabBrowser != null){
+				this.debug("\tTab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + this.tabsArray[i].title + "\"");
+				if(this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1")
+					|| this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2")){
+					this.debug("\tClosing tab " + i);
+					this.tabManager.closeTab(i);
+					return;
+				}
+			} else {
+				this.debug("\tTab " + i + " without id and title \"" + this.tabsArray[i].title + "\"");
+			}
+		}
+		this.debug("\tTab not found");
+	} catch(e) { Cu.reportError("ThunderKeepPlus: closeGoogleKeepTab " + e);}
+}

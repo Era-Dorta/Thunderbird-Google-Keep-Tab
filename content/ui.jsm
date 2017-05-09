@@ -15,6 +15,7 @@ function Ui(enableDebug) {
 	this.enableDebug = enableDebug;
 	this.buttonNode = null;
 	this.menuNode = null;
+	this.appMenuNode = null;
 	this.window = null;
 	this.loaded = false;
 
@@ -34,7 +35,6 @@ function Ui(enableDebug) {
 	this.prefs_branch = Services.prefs.getBranch("extensions.thunderkeepplus.");
 
 	this.afterCustomizeFnc = this.afterCustomize.bind(this);
-	this.onSignOutFnc = this.onSignOut.bind(this);
 }
 
 Ui.prototype = {
@@ -72,13 +72,14 @@ Ui.prototype = {
 			this.loaded = false;
 			this.window.removeEventListener("aftercustomization", this.afterCustomizeFnc, false);
 
-			if(this.buttonNode != null && this.buttonNode.parentNode != null){
-				this.buttonNode.parentNode.removeChild(this.buttonNode);
-			}
-			if(this.menuNode != null && this.menuNode.parentNode != null){
-				this.menuNode.parentNode.removeChild(this.menuNode);
-			}
+			this.removeNode(this.buttonNode);
+			this.removeNode(this.menuNode);
+			this.removeNode(this.appMenuNode);
+
 			this.buttonNode = null;
+			this.menuNode = null;
+			this.appMenuNode = null;
+			
 			this.window = null;
 		} catch(e) {Cu.reportError("ThunderKeepPlus: Ui.destroy " + e);}
 	},
@@ -88,7 +89,7 @@ Ui.prototype = {
 				this.debug("Ui createOverlay");
 				let toolbox = this.window.document.getElementById("mail-toolbox");
 				if(toolbox != null){
-					this.debug("Ui createOverlay found the toolbox");
+					this.debug("\tFound the toolbox");
 					// Create the Google Keep button
 					this.buttonNode = this.window.document.createElement("toolbarbutton");
 					this.buttonNode.setAttribute("id","thunderkeepplus-toolbar-button");
@@ -99,7 +100,7 @@ Ui.prototype = {
 					// Add it to the toolbox, this allows the user to move with the customize option
 					toolbox.palette.appendChild(this.buttonNode);
 					this.loaded = true;
-					this.debug("Ui createOverlay, button created");
+					this.debug("\tButton created");
 
 					let parentNodeId = this.prefs_branch.getCharPref("parentNodeId");
 
@@ -122,7 +123,7 @@ Ui.prototype = {
 
 						parentNode.insertItem(this.buttonNode.id, nextNode);
 
-						this.debug("Ui createOverlay, button placed under \"" + parentNodeId
+						this.debug("\tButton placed under \"" + parentNodeId
 								+ "\", before \"" + nextNodeId + "\"");
 					} else {
 						let msg = "ThunderKeepPlus could not insert the button in the toolbar" +
@@ -134,27 +135,18 @@ Ui.prototype = {
 					}
 					this.window.addEventListener("aftercustomization", this.afterCustomizeFnc, false);
 					
+					// Add menu items to allow for sign out
+					let nodeLabel = this.stringBundle.GetStringFromName("ThunderKeepPlus.signOutLabel");
+					this.menuNode = this.createInsertMenuItem("thunderkeepplus_signout",
+							nodeLabel, "taskPopup", "javascriptConsole");
+					this.appMenuNode = this.createInsertMenuItem("appmenu_thunderkeepplus_signout",
+							nodeLabel, "appmenu_taskPopup", "appmenu_javascriptConsole");
 					
-					// Create the sign out menu item in Tools
-					parentNode = this.window.document.getElementById("taskPopup");
-					this.menuNode = this.window.document.createElement("menuitem");
-					this.menuNode.setAttribute("id", "thunderkeepplus-menu");
-					this.menuNode.setAttribute("label", "Google Keep Sign Out");
-					
-					// Insert before the JavaScript console menu item
-					let nextNode = this.window.document.getElementById("javascriptConsole");
-	
-					if (nextNode != null){
-						parentNode.insertBefore(this.menuNode, nextNode);
-					} else {
-						parentNode.appendChild(this.menuNode);
-					}
-					
-					this.menuNode.addEventListener("command", this.onSignOutFnc, false);
+					this.debug("\tDone attaching UI components");
 				}
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
 	},
-	
+
 	afterCustomize: function (e) {
 		try{
 			this.debug("Ui afterCustomize");
@@ -174,29 +166,38 @@ Ui.prototype = {
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
 	},
 	
-	onSignOut: function(event) {
-		// Log out the user by removing the google.com cookies
-		try{
+	createInsertMenuItem: function (nodeId, nodeLabel, parentId, nextNodeId){
+		this.debug("\tUi createInsertMenuItem");
+		this.debug("\t\tParams: \"" + nodeId + "\", \"" + nodeLabel + "\", \"" +
+				parentId + "\", \"" + nextNodeId + "\"");
+		// Create the sign out menu item in Tools
+		let menuNode = null;
+		let parentNode = this.window.document.getElementById(parentId);
+		if(parentNode == null){
+			this.debug("\t\tparentNode not found");
+			return menuNode;
+		}
+		menuNode = this.window.document.createElement("menuitem");
+		menuNode.setAttribute("id", nodeId);
+		menuNode.setAttribute("label", nodeLabel);
+		
+		// Insert before the JavaScript console menu item
+		let nextNode = this.window.document.getElementById(nextNodeId);
 
-			let cookieOrigin = "google.com"; // Cookies from here will be removed
-			let cookieManager = Services.cookies;
-		
-			let numCookies = cookieManager.countCookiesFromHost(cookieOrigin);
-			this.debug("Found " + numCookies + " cookies from " + cookieOrigin);
-		
-			if (numCookies > 0) {
-				let cookies = cookieManager.getCookiesFromHost(cookieOrigin);
-				let cookie = null;
-				while (cookies.hasMoreElements()){
-					cookie = cookies.getNext().QueryInterface(Ci.nsICookie2);
-					this.debug("\tRemoving cookie [" + cookie.host + "], [" +  cookie.name + "], [" + cookie.path + "]");
-					cookieManager.remove(cookie.host, cookie.name, cookie.path, false, cookieOrigin);
-				}
-			}
-		
-			this.debug("Done removing cookies");
-
-		} catch(event) {Cu.reportError("ThunderKeepPlus: onSignOut " + event);}
+		if (nextNode != null){
+			this.debug("\t\tInserting before \"" + nextNodeId + "\"");
+			parentNode.insertBefore(menuNode, nextNode);
+		} else {
+			this.debug("\t\tInserting at the end of \"" + parentId + "\"");
+			parentNode.appendChild(menuNode);
+		}
+		return menuNode;
+	},
+	
+	removeNode: function (node){
+		if(node != null && node.parentNode != null){
+			node.parentNode.removeChild(node);
+		}
 	}
 }
 
