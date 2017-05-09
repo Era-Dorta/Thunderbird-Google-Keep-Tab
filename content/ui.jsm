@@ -138,9 +138,9 @@ Ui.prototype = {
 					// Add menu items to allow for sign out
 					let nodeLabel = this.stringBundle.GetStringFromName("ThunderKeepPlus.signOutLabel");
 					this.menuNode = this.createInsertMenuItem("thunderkeepplus_signout",
-							nodeLabel, "taskPopup", "javascriptConsole");
+							nodeLabel, "taskPopup", "sanitizeHistory");
 					this.appMenuNode = this.createInsertMenuItem("appmenu_thunderkeepplus_signout",
-							nodeLabel, "appmenu_taskPopup", "appmenu_javascriptConsole");
+							nodeLabel, "appmenu_taskPopup", "appmenu_sanitizeHistory");
 					
 					this.debug("\tDone attaching UI components");
 				}
