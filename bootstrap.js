@@ -11,7 +11,7 @@ const extensionLink = "chrome://ThunderKeepPlus/",
 
 const PREF_BRANCH = "extensions.thunderkeepplus.";
 // Default button position
-const PREFS = {parentNodeId: "mail-bar3", nextNodeId: "button-tag"};
+const PREFS = new Map([["parentNodeId", "mail-bar3"], ["nextNodeId", "button-tag"]]);
 
 var ui = undefined;
 var tkpManager = undefined;
@@ -20,18 +20,12 @@ var enableDebug = false;
 
 function startup(data,reason) {
 	debug("startup");
-	
-	if(reason == ADDON_UPGRADE){
-		// Version 0.9 never unloads the scripts, do it here to fix upgrade issues
-		Cu.unload(uiModuleLink);
-		Cu.unload(mainScriptLink);
-	}
 
 	Cu.import(uiModuleLink);
-	Cu.import(mainScriptLink);
-
+	Cu.import(mainScriptLink);	
+	
 	loadDefaultPreferences();
-
+	
 	ui = new Ui(enableDebug);
 	tkpManager = new TKPManager(enableDebug);
 
@@ -50,9 +44,6 @@ function shutdown(data,reason) {
 
 	unloadThunderKeepPlus();
 	Services.wm.removeListener(WindowListener);
-	
-	Cu.unload(uiModuleLink);
-	Cu.unload(mainScriptLink);
 
 	// HACK WARNING: The Addon Manager does not properly clear all addon related caches on update;
 	// in order to fully update images and locales, their caches need clearing here
@@ -111,7 +102,7 @@ function loadDefaultPreferences() {
 	debug("loadDefaultPreferences");
 
 	let branch = Services.prefs.getDefaultBranch(PREF_BRANCH);
-	for (let [key, val] in Iterator(PREFS)) {
+	for (let [key, val] of PREFS) {
 		switch (typeof val) {
 		case "boolean":
 			branch.setBoolPref(key, val);

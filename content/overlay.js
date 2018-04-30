@@ -8,9 +8,6 @@ const Cc = Components.classes;
 
 Cu.import("resource://gre/modules/Services.jsm");
 
-/** Log into console (also shown in terminal that runs firefox **/
-Cu.import("resource://gre/modules/devtools/Console.jsm");
-
 function TKPManager(enableDebug)
 {
 	this.enableDebug = enableDebug;
