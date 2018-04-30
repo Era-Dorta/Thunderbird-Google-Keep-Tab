@@ -2,7 +2,7 @@
 
 var EXPORTED_SYMBOLS = ["Ui"];
 
-const Cu = Components.utils;
+const Cu = ChromeUtils;
 const Ci = Components.interfaces;
 const Cc = Components.classes;
 
