@@ -11,41 +11,41 @@ Cu.import("resource://gre/modules/Services.jsm");
 /**
  * Add and remove addon user interface - replacement over overlay.xul
  */
-function Ui(enableDebug) {
-	this.enableDebug = enableDebug;
-	this.buttonNode = null;
-	this.menuNode = null;
-	this.appMenuNode = null;
-	this.window = null;
-	this.loaded = false;
+class Ui {
+	constructor(enableDebug){
+		this.enableDebug = enableDebug;
+		this.buttonNode = null;
+		this.menuNode = null;
+		this.appMenuNode = null;
+		this.window = null;
+		this.loaded = false;
 
-	/** Css components initialization **/
-	this.sss = Cc["@mozilla.org/content/style-sheet-service;1"]
-		.getService(Ci.nsIStyleSheetService);
-	let ios = Cc["@mozilla.org/network/io-service;1"]
-		.getService(Ci.nsIIOService);
-	this.cssUri = ios.newURI("chrome://ThunderKeepPlus/skin/overlay.css", null, null);
+		/** Css components initialization **/
+		this.sss = Cc["@mozilla.org/content/style-sheet-service;1"]
+			.getService(Ci.nsIStyleSheetService);
+		let ios = Cc["@mozilla.org/network/io-service;1"]
+			.getService(Ci.nsIIOService);
+		this.cssUri = ios.newURI("chrome://ThunderKeepPlus/skin/overlay.css", null, null);
 
-	/** User alerts **/
-	this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
+		/** User alerts **/
+		this.prompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 
-	/** Import localization properties **/
-	this.stringBundle = Services.strings.createBundle("chrome://ThunderKeepPlus/locale/overlay.properties?" + Math.random()); // Randomize URI to work around bug 719376
+		/** Import localization properties **/
+		this.stringBundle = Services.strings.createBundle("chrome://ThunderKeepPlus/locale/overlay.properties?" + Math.random()); // Randomize URI to work around bug 719376
 
-	this.prefs_branch = Services.prefs.getBranch("extensions.thunderkeepplus.");
+		this.prefs_branch = Services.prefs.getBranch("extensions.thunderkeepplus.");
 
-	this.afterCustomizeFnc = this.afterCustomize.bind(this);
-}
+		this.afterCustomizeFnc = this.afterCustomize.bind(this);
+	}
 
-Ui.prototype = {
-	debug: function (aMessage) {
+	debug(aMessage) {
 		if(this.enableDebug) {
 			let consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 			consoleService.logStringMessage("ThunderKeepPlus: " + aMessage);
 		}
-	},
+	}
 	
-	attach: function(window) {
+	attach(window) {
 		try{
 			this.debug("Ui attach");
 			if(this.loaded){
@@ -58,9 +58,9 @@ Ui.prototype = {
 
 			this.createOverlay();
 		} catch(e) {Cu.reportError("ThunderKeepPlus: Ui.attach " + e);}
-	},
+	}
 
-	destroy: function() {
+	destroy() {
 		try{
 			this.debug("Ui destroy");
 			if(this.sss.sheetRegistered(this.cssUri, this.sss.AUTHOR_SHEET)){
@@ -82,9 +82,9 @@ Ui.prototype = {
 			
 			this.window = null;
 		} catch(e) {Cu.reportError("ThunderKeepPlus: Ui.destroy " + e);}
-	},
+	}
 
-	createOverlay: function() {
+	createOverlay() {
 		try{
 				this.debug("Ui createOverlay");
 				let toolbox = this.window.document.getElementById("mail-toolbox");
@@ -145,9 +145,9 @@ Ui.prototype = {
 					this.debug("\tDone attaching UI components");
 				}
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
-	},
+	}
 
-	afterCustomize: function (e) {
+	afterCustomize(e) {
 		try{
 			this.debug("Ui afterCustomize");
 			// Save in the preferences the parentNode and the nextSibling
@@ -164,9 +164,9 @@ Ui.prototype = {
 					this.prefs_branch.getCharPref("parentNodeId") +"\", nextNodeId: \"" +
 					this.prefs_branch.getCharPref("nextNodeId") + "\"");
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
-	},
+	}
 	
-	createInsertMenuItem: function (nodeId, nodeLabel, parentId, nextNodeId){
+	createInsertMenuItem (nodeId, nodeLabel, parentId, nextNodeId){
 		this.debug("\tUi createInsertMenuItem");
 		this.debug("\t\tParams: \"" + nodeId + "\", \"" + nodeLabel + "\", \"" +
 				parentId + "\", \"" + nextNodeId + "\"");
@@ -192,9 +192,9 @@ Ui.prototype = {
 			parentNode.appendChild(menuNode);
 		}
 		return menuNode;
-	},
+	}
 	
-	removeNode: function (node){
+	removeNode (node){
 		if(node != null && node.parentNode != null){
 			node.parentNode.removeChild(node);
 		}
