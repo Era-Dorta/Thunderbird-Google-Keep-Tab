@@ -120,7 +120,7 @@ class TKPManager {
 			
 			this.debug("\tTab not found, opening new one");
 			
-			let gtab = this.tabManager.openTab("contentTab", {contentPage: "http://keep.google.com"});
+			let gtab = this.tabManager.openTab("contentTab", {contentPage: "https://keep.google.com"});
 			
 			this.debug("\tTab opened successfully");
 			
