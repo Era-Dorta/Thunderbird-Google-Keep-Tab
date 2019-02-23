@@ -15,8 +15,6 @@ class Ui {
 	constructor(enableDebug){
 		this.enableDebug = enableDebug;
 		this.buttonNode = null;
-		this.menuNode = null;
-		this.appMenuNode = null;
 		this.window = null;
 		this.loaded = false;
 
@@ -73,12 +71,8 @@ class Ui {
 			this.window.removeEventListener("aftercustomization", this.afterCustomizeFnc, false);
 
 			this.removeNode(this.buttonNode);
-			this.removeNode(this.menuNode);
-			this.removeNode(this.appMenuNode);
 
 			this.buttonNode = null;
-			this.menuNode = null;
-			this.appMenuNode = null;
 			
 			this.window = null;
 		} catch(e) {Cu.reportError("ThunderKeepPlus: Ui.destroy " + e);}
@@ -135,13 +129,6 @@ class Ui {
 					}
 					this.window.addEventListener("aftercustomization", this.afterCustomizeFnc, false);
 					
-					// Add menu items to allow for sign out
-					let nodeLabel = this.stringBundle.GetStringFromName("ThunderKeepPlus.signOutLabel");
-					this.menuNode = this.createInsertMenuItem("thunderkeepplus_signout",
-							nodeLabel, "taskPopup", "sanitizeHistory");
-					this.appMenuNode = this.createInsertMenuItem("appmenu_thunderkeepplus_signout",
-							nodeLabel, "appmenu_taskPopup", "appmenu_sanitizeHistory");
-					
 					this.debug("\tDone attaching UI components");
 				}
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
@@ -164,34 +151,6 @@ class Ui {
 					this.prefs_branch.getCharPref("parentNodeId") +"\", nextNodeId: \"" +
 					this.prefs_branch.getCharPref("nextNodeId") + "\"");
 		} catch(e) {Cu.reportError("ThunderKeepPlus: createOverlay " + e);}
-	}
-	
-	createInsertMenuItem (nodeId, nodeLabel, parentId, nextNodeId){
-		this.debug("\tUi createInsertMenuItem");
-		this.debug("\t\tParams: \"" + nodeId + "\", \"" + nodeLabel + "\", \"" +
-				parentId + "\", \"" + nextNodeId + "\"");
-		// Create the sign out menu item in Tools
-		let menuNode = null;
-		let parentNode = this.window.document.getElementById(parentId);
-		if(parentNode == null){
-			this.debug("\t\tparentNode not found");
-			return menuNode;
-		}
-		menuNode = this.window.document.createElement("menuitem");
-		menuNode.setAttribute("id", nodeId);
-		menuNode.setAttribute("label", nodeLabel);
-		
-		// Insert before the JavaScript console menu item
-		let nextNode = this.window.document.getElementById(nextNodeId);
-
-		if (nextNode != null){
-			this.debug("\t\tInserting before \"" + nextNodeId + "\"");
-			parentNode.insertBefore(menuNode, nextNode);
-		} else {
-			this.debug("\t\tInserting at the end of \"" + parentId + "\"");
-			parentNode.appendChild(menuNode);
-		}
-		return menuNode;
 	}
 	
 	removeNode (node){

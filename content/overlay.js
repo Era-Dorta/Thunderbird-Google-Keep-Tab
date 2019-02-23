@@ -46,25 +46,7 @@ class TKPManager {
 			customButton.addEventListener("click", function(event) {
 				self.onToolbarButtonClick(event);
 			});
-			
-			// Sign out in main menu item
-			customButton = document.getElementById("thunderkeepplus_signout");
-			
-			if(customButton != null){
-				customButton.addEventListener("command", function(event) {
-					self.onSignOut(event);
-				}, false);
-			}
-			
-			// Sign out in app menu item
-			customButton = document.getElementById("appmenu_thunderkeepplus_signout");
-			
-			if(customButton != null){
-				customButton.addEventListener("command", function(event) {
-					self.onSignOut(event);
-				}, false);
-			}
-			
+						
 			this.debug("tabTitle1 is:\"" + this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1") + 
 				"\" and 2 is:\"" + this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2") + "\"");
 			
@@ -92,72 +74,39 @@ class TKPManager {
 		this.closeGoogleKeepTab();
 	}
 	
+	siteClickHandler(aEvent) {
+		// Don't handle events that: a) aren't trusted, b) have already been
+		// handled or c) aren't left-click.
+		if (!aEvent.isTrusted || aEvent.defaultPrevented || aEvent.button)
+			return true;
+
+		// For all other events, handle them inside thunderbird
+		// This allows to have multiple tabs from different accounts, and signing out
+		return false;
+	}
+	
 	onToolbarButtonClick(event) {
 
-		// Open a new tab with Google Keep or focus on the already opened one
+		// Open a new tab with Google Keep
 		try{
 			// Handle only left click
 			if(event.button !== 0){
 				return;
 			}
 			this.debug("TKPManager trying to open a Google Keep Tab ");
-			this.debug("\tFound " + String(this.tabsArray.length) + " tabs");
 			
-			for (let i = 0; i < this.tabsArray.length; i++) {
-				let tabBrowser = this.tabsArray[i].browser;
-				if(tabBrowser != null){
-					this.debug("\tTab " + i +  " with id \"" + tabBrowser.id + "\" and title \"" + this.tabsArray[i].title + "\"");
-					if(this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle1")
-						|| this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2")){
-						this.debug("\tSwitching to tab " + i);
-						this.tabManager.switchToTab(i);
-						return;
-					}
-				} else {
-					this.debug("\tTab " + i + " without id and title \"" + this.tabsArray[i].title + "\"");
-				}
-			}
-			
-			this.debug("\tTab not found, opening new one");
-			
-			let gtab = this.tabManager.openTab("contentTab", {contentPage: "https://keep.google.com"});
+			let gtab = this.tabManager.openTab("contentTab", {contentPage: "https://keep.google.com",
+																clickHandler: "this.siteClickHandler(event);"});
 			
 			this.debug("\tTab opened successfully");
 			
 		} catch(e) {Cu.reportError("ThunderKeepPlus: onToolbarButtonClick " + e);}
 	}
-	
-	onSignOut(event) {
-		// Log out the user by removing the google.com cookies
-		try{
-			this.debug("TKPManager trying to sign out");
-			let cookieOrigin = "google.com"; // Cookies from this address will be removed
-			let cookieManager = Services.cookies;
 		
-			let numCookies = cookieManager.countCookiesFromHost(cookieOrigin);
-			this.debug("\tFound " + numCookies + " cookies from " + cookieOrigin);
-		
-			if (numCookies > 0) {
-				let cookies = cookieManager.getCookiesFromHost(cookieOrigin, {});
-				let cookie = null;
-				while (cookies.hasMoreElements()){
-					cookie = cookies.getNext().QueryInterface(Ci.nsICookie2);
-					this.debug("\tRemoving cookie [" + cookie.host + "], [" +  cookie.name + "], [" + cookie.path + "]");
-					cookieManager.remove(cookie.host, cookie.name, cookie.path, false, cookie.originAttributes);
-				}
-			}
-		
-			this.debug("\tDone removing cookies");
-			
-			this.closeGoogleKeepTab();
-
-		} catch(event) {Cu.reportError("ThunderKeepPlus: onSignOut " + event);}
-	}
-	
 	closeGoogleKeepTab() {
-		// Close the Google Keep tab
+		// Close all Google Keep tabs
 		try{
-			this.debug("TKPManager trying to close the Google Keep Tab ");
+			this.debug("TKPManager trying to close Google Keep Tabs ");
 			this.debug("\tFound " + String(this.tabsArray.length) + " tabs");
 			for (let i = 0; i < this.tabsArray.length; i++) {
 				let tabBrowser = this.tabsArray[i].browser;
@@ -167,13 +116,13 @@ class TKPManager {
 						|| this.tabsArray[i].title === this.strings.GetStringFromName("ThunderKeepPlus.tabTitle2")){
 						this.debug("\tClosing tab " + i);
 						this.tabManager.closeTab(i);
-						return;
+						i--; // tabsArray changed size because we just closed a tab
 					}
 				} else {
 					this.debug("\tTab " + i + " without id and title \"" + this.tabsArray[i].title + "\"");
 				}
 			}
-			this.debug("\tTab not found");
+			this.debug("\tDone closing tabs");
 		} catch(e) { Cu.reportError("ThunderKeepPlus: closeGoogleKeepTab " + e);}
 	}
 }
