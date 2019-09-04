@@ -6,7 +6,7 @@ const Cu = ChromeUtils;
 const Ci = Components.interfaces;
 const Cc = Components.classes;
 
-Cu.import("resource://gre/modules/Services.jsm");
+var { Services } = Cu.import("resource://gre/modules/Services.jsm");
 
 class TKPManager {
 	constructor(enableDebug) {

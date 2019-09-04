@@ -2,7 +2,7 @@ const Cu = ChromeUtils;
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-Cu.import("resource://gre/modules/Services.jsm");
+var { Services } = Cu.import("resource://gre/modules/Services.jsm");
 
 const extensionLink = "chrome://ThunderKeepPlus/",
 	contentLink = extensionLink + "content/",
@@ -21,8 +21,8 @@ var enableDebug = false;
 function startup(data,reason) {
 	debug("startup");
 
-	Cu.import(uiModuleLink);
-	Cu.import(mainScriptLink);	
+	var { Ui } = Cu.import(uiModuleLink);
+	var { TKPManager } = Cu.import(mainScriptLink);
 	
 	loadDefaultPreferences();
 	
