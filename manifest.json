@@ -7,11 +7,16 @@
     }
   },
   "name": "ThunderKeepPlus",
-  "description": "Google Keep for Thunderbird",
-  "author" : "Garoe Dorta",
+  "description": "__MSG_extensionDescription__",
+  "developer": {
+    "name": "Garoe Dorta",
+    "url": "https://github.com/Garoe/ThunderKeepPlus/"
+  },
+  "default_locale": "en",
   "version": "0.10.4",
   "icons": {
-    "32": "skin/google_keep_logo_large.png.png"
+    "16": "skin/google_keep_logo_small.png",
+    "24": "skin/google_keep_logo_large.png"
   },
   "legacy": {
     "type" : "bootstrap"
