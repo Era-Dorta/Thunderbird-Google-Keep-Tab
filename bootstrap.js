@@ -29,7 +29,7 @@ function startup(data,reason) {
 	ui = new Ui(enableDebug);
 	tkpManager = new TKPManager(enableDebug);
 
-	forEachOpenWindow(loadIntoWindow);
+	loadForEachOpenWindow();
 	maybeAddWindowListener();
 }
 function shutdown(data,reason) {
@@ -45,9 +45,6 @@ function shutdown(data,reason) {
 	unloadThunderKeepPlus();
 	Services.wm.removeListener(WindowListener);
 
-	// HACK WARNING: The Addon Manager does not properly clear all addon related caches on update;
-	// in order to fully update images and locales, their caches need clearing here
-	Services.obs.notifyObservers(null, "chrome-flush-caches", null);
 }
 function unloadThunderKeepPlus() {
 	debug("unloadThunderKeepPlus");
@@ -61,23 +58,17 @@ function install(data) {
 function uninstall() {
 	/** Present here only to avoid warning on addon removal **/
 }
-function loadIntoWindow(window) {
-	debug("loadIntoWindow");
 
-	if(window.document != null){
-		debug("loadIntoWindow dom title: " + window.document.title);
-		ui.attach(window);
-		tkpManager.onLoad(window.document);
-	}
-	return (ui.loaded && tkpManager.loaded);
-}
-function forEachOpenWindow(fnc)  // Apply a function to all open browser windows
+function loadForEachOpenWindow()  // Try to load in all open browser windows
 {
-	debug("forEachOpenWindow");
+	debug("loadForEachOpenWindow");
 
-	var windows = Services.wm.getEnumerator(null);
+	var windows = Services.wm.getEnumerator("mail:3pane");
 	while (windows.hasMoreElements()){
-		if(fnc(windows.getNext().QueryInterface(Ci.nsIDOMWindow))){
+		let domWindow = windows.getNext().QueryInterface(Ci.nsIDOMWindow);
+		if(WindowListener.loadIntoWindow(domWindow)){
+			// The button was added in the main window,
+			// so there is no need to keep trying with other windows
 			return;
 		}
 	}
@@ -89,6 +80,7 @@ function maybeAddWindowListener(){
 		debug("maybeAddWindowListener adding listener");
 		Services.wm.addListener(WindowListener);
 	}
+	debug("maybeAddWindowListener exit");
 }
 function maybeRemoveWindowListener(){
 	debug("maybeRemoveWindowListener");
@@ -130,22 +122,48 @@ function debug(aMessage) {
 }
 var WindowListener =
 {
-	onOpenWindow: function(xulWindow)
-	{
-		debug("WindowListener: onOpenWindow");
-		
-		var window = xulWindow.QueryInterface(Ci.nsIInterfaceRequestor)
-								.getInterface(Ci.nsIDOMWindow);
-		function onWindowLoad()
-		{
-			window.removeEventListener("load", onWindowLoadFnc);
-			debug("WindowListener: onWindowLoad");
-			loadIntoWindow(window);
-			maybeRemoveWindowListener();
+
+	async loadIntoWindow(window) {
+		debug("loadIntoWindow");
+		if (window.document.readyState != "complete") {
+			// Make sure the window load has completed.
+			debug("loadIntoWindow await");
+			await new Promise(resolve => {
+				window.addEventListener("load", resolve, { once: true });
+			});
 		}
-		var onWindowLoadFnc = onWindowLoad.bind(this);
-		window.addEventListener("load", onWindowLoadFnc);
+
+		debug("loadIntoWindow calling loadIntoWindowAfterWindowIsReady");
+		return this.loadIntoWindowAfterWindowIsReady(window);
 	},
+
+	loadIntoWindowAfterWindowIsReady: function(window) {
+		debug("loadIntoWindowAfterWindowIsReady");
+
+		if(window.document != null){
+			debug("loadIntoWindowAfterWindowIsReady dom title: " + window.document.title);
+			ui.attach(window);
+			tkpManager.onLoad(window.document);
+		}
+		return (ui.loaded && tkpManager.loaded);
+	},
+
+	onOpenWindow: function(xulWindow) {
+		debug("WindowListener: onOpenWindow");
+
+		// A new window has opened.
+		let domWindow = xulWindow.QueryInterface(Ci.nsIInterfaceRequestor)
+				             .getInterface(Ci.nsIDOMWindow);
+
+
+		// Check if the opened window is the one we want to modify.
+		if (domWindow.document.documentElement
+				.getAttribute("windowtype") === "mail:3pane") {
+			this.loadIntoWindow(domWindow);
+		}
+	},
+
 	onCloseWindow: function(xulWindow) { },
+
 	onWindowTitleChange: function(xulWindow, newTitle) { }
 };
