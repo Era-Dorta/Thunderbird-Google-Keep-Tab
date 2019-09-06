@@ -38,8 +38,7 @@ class Ui {
 
 	debug(aMessage) {
 		if(this.enableDebug) {
-			let consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
-			consoleService.logStringMessage("ThunderKeepPlus: " + aMessage);
+			console.debug("ThunderKeepPlus: " + aMessage);
 		}
 	}
 	
