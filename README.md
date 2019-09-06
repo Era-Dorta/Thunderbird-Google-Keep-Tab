@@ -11,5 +11,5 @@ Download the repository, zip it, rename it to ThunderKeepPlus.xpi and choose ins
 In linux the xpi file can be created with the following commands
 * `git clone https://github.com/Garoe/ThunderKeepPlus`
 * `cd ./ThunderKeepPlus`
-* `VERSION=$(cat ./install.rdf | grep "<em:version>.*</em:version>" | sed -r 's:</?em\:version>::g' | sed -e "s/[[:space:]]\+//g")`
+* `VERSION=$(cat ./manifest.json | jq --raw-output '.version')`
 * `zip -r "../ThunderKeepPlus-${VERSION}-tb.xpi" *`
