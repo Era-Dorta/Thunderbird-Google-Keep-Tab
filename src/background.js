@@ -1,4 +1,4 @@
-var is_release = true;
+const is_release = true;
 
 function debug_msg(message){
   if(is_release){
