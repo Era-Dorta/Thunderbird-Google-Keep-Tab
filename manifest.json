@@ -10,7 +10,7 @@
   "description": "__MSG_extensionDescription__",
   "author": "[Garoe Dorta]",
   "homepage_url": "https://github.com/Garoe/ThunderKeepPlus/",
-  "version": "0.10.5",
+  "version": "0.10.7",
   "default_locale": "en",
   "icons": {
     "48": "skin/google_keep_icon.svg",
