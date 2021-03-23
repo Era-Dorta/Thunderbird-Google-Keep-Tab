@@ -6,11 +6,11 @@
       "strict_min_version": "78.0"
     }
   },
-  "name": "ThunderKeepPlus",
+  "name": "Google Keep Tab",
   "description": "__MSG_extensionDescription__",
   "author": "[Garoe Dorta]",
-  "homepage_url": "https://github.com/Garoe/ThunderKeepPlus/",
-  "version": "0.10.7",
+  "homepage_url": "https://github.com/Garoe/Thunderbird-Google-Keep-Tab/",
+  "version": "0.10.8",
   "default_locale": "en",
   "icons": {
     "48": "skin/google_keep_icon.svg",

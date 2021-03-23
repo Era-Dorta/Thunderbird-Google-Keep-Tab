@@ -4,7 +4,7 @@ function debug_msg(message){
   if(is_release){
     return;
   }
-  console.debug("ThunderKeepPlus: " + message);
+  console.debug("Google-Keep-Tab: " + message);
 }
 
 debug_msg("Loading");
