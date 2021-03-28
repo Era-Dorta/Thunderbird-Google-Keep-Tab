@@ -1,6 +1,6 @@
 # Google Keep Tab
 Unofficial Google Keep add-on for Thunderbird, it adds a button that opens a Google Keep tab in Thunderbird.
-The [home page](https://addons.mozilla.org/thunderbird/addon/thunderkeepplus/) of the extension contains some pictures and reviews.
+The [home page](https://addons.thunderbird.net/thunderbird/addon/google-keep-tab) of the extension contains some pictures and reviews.
 
 #### Installing 
 Simply search for Google Keep inside Thunderbird and the addon should show up.
