@@ -18,10 +18,10 @@ if ("browserAction" in browser) {
   debug_msg("Has permision for browserAction");
 
   browser.browserAction.onClicked.addListener(async () => {
-    openNewTab("https://keep.google.com");
+    openNewTab("https://use01.thegood.cloud");
   });
 } else {
-  openNewTab("https://keep.google.com");
+  openNewTab("https://use01.thegood.cloud");
 }
 
 debug_msg("Loaded");

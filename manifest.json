@@ -6,7 +6,7 @@
       "strict_min_version": "78.0"
     }
   },
-  "name": "Google Keep Tab",
+  "name": "Good Cloud Tab",
   "description": "__MSG_extensionDescription__",
   "author": "[Garoe Dorta]",
   "homepage_url": "https://github.com/Garoe/Thunderbird-Google-Keep-Tab/",
@@ -17,7 +17,7 @@
     "96": "skin/google_keep_icon.svg"
   },
   "browser_action": {
-    "default_title": "Google Keep",
+    "default_title": "Good Cloud",
     "default_icon": "skin/google_keep_icon.svg"
   },
   "background": {
